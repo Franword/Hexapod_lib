@@ -7,6 +7,7 @@
 #endif
 #include "Adafruit_PWMServoDriver.h"
 #include "PWM_values.h"
+#include "Addresses.h"
 class PWM
 {
 	public:

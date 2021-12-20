@@ -87,7 +87,7 @@ void Servo::MoveServo(int angle,bool relative)
 	}
 	else{
 		if(_inverse){
-			angle=SERVOMAX-angle;
+			angle=180-angle;
 		}
 	}
 	_PWM_wsk->SetPWM(_address, angle);

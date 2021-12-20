@@ -13,6 +13,7 @@ class Servo
   void SaveAnglesEEPROM();
   private:
   int _angle;
+  int _calibrated_angle;
   int _address;
   bool _inverse;
   PWM* _PWM_wsk;
