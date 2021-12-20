@@ -6,4 +6,5 @@
 #ifndef HEXAPOD_LIB_H_INCLUDED
 #define HEXAPOD_LIB_H_INCLUDED
 #include "Hexapod.h"
+#include "GamePad.h"
 #endif //HEXAPOD_LIB_H_INCLUDED
