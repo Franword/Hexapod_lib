@@ -1,6 +1,6 @@
 #include <Hexapod_lib.h>
 
-int angle=10;
+int angle=1;
 int leg_angles[3]={0,10,-10};
 int hexapod_angles[6][3]={{10,20,30},{20,30,40},{40,50,60},{50,60,70},{60,70,80},{70,80,90}};
 int hexapod_angles_init[6][3]={{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},
@@ -10,7 +10,7 @@ int leg_num=R1;
 int servo_num=q1;
 bool isrelative=true;
 Hexapod* hexapod_wsk;
-
+int number_of_moves=2;
 void setup()
 {
   Serial.begin(9600);
@@ -43,21 +43,45 @@ void loop() {
       }
       Serial.print(", angle= ");
       Serial.println(angle,DEC);
+      Serial.print(", number of moves = ");
+      Serial.println(number_of_moves);
     }
     else if(command.equals("help")){
-      Serial.println("type:init, MoveHexapod, MoveServo, MoveLeg,relative, absolute\nR1, R2, R3, L1, L2, L3, q1, q2, q3, help");
+      Serial.println("move: init, MoveHexapod, MoveServo, MoveLeg");
+      Serial.println("set type of move: relative, absolute");
+      Serial.println("choose leg to move: R1, R2, R3, L1, L2, L3");
+      Serial.println("choose q: q1, q2, q3");
+      Serial.println("print info: info, help, current, calibrated");
+      Serial.println("Save current angles to EEPROM : SaveAngles");
+      Serial.println("change number of moves: -, +");
+      Serial.println("change one move length: angle-, angle+");
+    }
+    else if(command.equals("calibrated")){
+      hexapod_wsk->info(false);
+    }
+    else if(command.equals("current")){
+      hexapod_wsk->info(true);
     }
      else if(command.equals("init")){
       hexapod_wsk->MoveHexapod(hexapod_angles_init,false);
      }
     else if(command.equals("MoveHexapod")){
-      hexapod_wsk->MoveHexapod(hexapod_angles,isrelative);
+      for(int i=0;i<number_of_moves;i++){
+        hexapod_wsk->MoveHexapod(hexapod_angles,isrelative);
+      }
     }
     else if (command.equals("MoveLeg")){
+      leg_angles[q1]=0;
+      leg_angles[q2]=angle;
+      leg_angles[q3]=-angle;
+      for(int i=0;i<number_of_moves;i++){
       hexapod_wsk->MoveLeg(leg_angles,isrelative,leg_num);
+      }
     }
     else if (command.equals("MoveServo")){
-      hexapod_wsk->MoveServo(angle,isrelative,leg_num,servo_num);
+       for(int i=0;i<number_of_moves;i++){
+          hexapod_wsk->MoveServo(angle,isrelative,leg_num,servo_num);
+       }
     }
     else if (command.equals("R1")){
       leg_num=R1;
@@ -102,7 +126,30 @@ void loop() {
     else if (command.equals("absolute")){
       isrelative=false;
       Serial.println("move set to absolute");
-    }     
+    }
+    else if (command.equals("SaveAngles")){
+      hexapod_wsk->SaveAnglesEEPROM();
+    }
+    else if (command.equals("-")){
+      number_of_moves=number_of_moves-1;
+      Serial.print("number of moves = ");
+      Serial.println(number_of_moves);
+    }
+    else if (command.equals("+")){
+      number_of_moves=number_of_moves+1;
+      Serial.print("number of moves = ");
+      Serial.println(number_of_moves);
+    }
+    else if (command.equals("angle-")){
+      angle=angle-1;
+      Serial.print("angle = ");
+      Serial.println(angle);
+    }
+    else if (command.equals("angle+")){
+      angle=angle+1;
+      Serial.print("angle = ");
+      Serial.println(angle);
+    }
     else{
       Serial.println("incorrect command");
     }
