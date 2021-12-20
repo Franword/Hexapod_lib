@@ -8,6 +8,7 @@ class Servo
   Servo();
   Servo(int,int,PWM*);
   void MoveServo(int,bool);
+  void info();
   private:
   int _angle;
   int _address;

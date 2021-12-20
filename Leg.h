@@ -8,6 +8,7 @@ class Leg
   Leg(int, PWM*);
   void MoveLeg(int[3],bool);
   void MoveServo(int,bool,int);
+  void info();
   private:
     Servo _Servo[3];
 	int _leg_num;

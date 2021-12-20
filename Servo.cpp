@@ -100,3 +100,6 @@ void Servo::MoveServo(int angle,bool relative)
 	Serial.print(", inverse- ");
 	Serial.print(_inverse);*/
 };
+void Servo::info(){
+	Serial.print(_angle);
+}

@@ -1,4 +1,5 @@
 #include "Leg.h"
+#include "print.h"
 Leg::Leg(){};
 Leg::Leg(int leg_num,PWM* PWM_wsk){
 	//Serial.println("Creating Leg");
@@ -21,3 +22,13 @@ void Leg::MoveLeg(int angle[3],bool relative){
 void Leg::MoveServo(int angle,bool relative, int servo_num){
 	_Servo[servo_num].MoveServo(angle,relative);
 };
+void Leg::info(){
+	print_leg_num(_leg_num);
+	Serial.print(" [");
+	_Servo[q1].info();
+	Serial.print(", ");
+	_Servo[q2].info();
+	Serial.print(", ");
+	_Servo[q3].info();
+	Serial.println("]");
+}
