@@ -8,7 +8,8 @@ class Leg
   Leg(int, PWM*);
   void MoveLeg(int[3],bool);
   void MoveServo(int,bool,int);
-  void info();
+  void info(bool);
+  void SaveAnglesEEPROM();
   private:
     Servo _Servo[3];
 	int _leg_num;

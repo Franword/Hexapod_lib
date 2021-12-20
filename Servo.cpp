@@ -100,6 +100,14 @@ void Servo::MoveServo(int angle,bool relative)
 	Serial.print(", inverse- ");
 	Serial.print(_inverse);*/
 };
-void Servo::info(){
+void Servo::info(bool if_current){
+	if(if_current){
 	Serial.print(_angle);
+	}
+	else{
+		Serial.print(EEPROM.read(_address));
+	}
 }
+void Servo::SaveAnglesEEPROM(){
+	EEPROM.update(_address,_angle);
+};

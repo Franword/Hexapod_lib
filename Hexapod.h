@@ -9,7 +9,8 @@ class Hexapod
   void MoveLeg(int[3],bool,int);
   void MoveServo(int,bool,int,int);
   void MoveHexapod(int[6][3],bool);
-  void info();
+   void info(bool);
+  void SaveAnglesEEPROM();
   private:
 	
     PWM _pwm[2];

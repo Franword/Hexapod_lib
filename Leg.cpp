@@ -22,13 +22,18 @@ void Leg::MoveLeg(int angle[3],bool relative){
 void Leg::MoveServo(int angle,bool relative, int servo_num){
 	_Servo[servo_num].MoveServo(angle,relative);
 };
-void Leg::info(){
+void Leg::info(bool if_current){
 	print_leg_num(_leg_num);
 	Serial.print(" [");
-	_Servo[q1].info();
+	_Servo[q1].info(if_current);
 	Serial.print(", ");
-	_Servo[q2].info();
+	_Servo[q2].info(if_current);
 	Serial.print(", ");
-	_Servo[q3].info();
+	_Servo[q3].info(if_current);
 	Serial.println("]");
-}
+};
+void Leg::SaveAnglesEEPROM(){
+	_Servo[q1].SaveAnglesEEPROM();
+	_Servo[q2].SaveAnglesEEPROM();
+	_Servo[q3].SaveAnglesEEPROM();
+};

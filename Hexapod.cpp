@@ -67,9 +67,14 @@ void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 		Serial.println("]");
 	};
 };
-void Hexapod::info(){
+void Hexapod::info(bool if_current){
 	for(int leg_num=0; leg_num <=5;leg_num++){
-		_leg[leg_num].info();
+		_leg[leg_num].info(if_current);
 	}
-}
+};
+void Hexapod::SaveAnglesEEPROM(){
+	for(int leg_num=0; leg_num <=5;leg_num++){
+		_leg[leg_num].SaveAnglesEEPROM();
+	}
+};
 
