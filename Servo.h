@@ -11,11 +11,12 @@ class Servo
   void MoveServo(int,bool);
   void info(bool);
   void SaveAnglesEEPROM();
+  void MoveInit();
   private:
   int _angle;
-  int _calibrated_angle;
   int _address;
   bool _inverse;
   PWM* _PWM_wsk;
+  int _id;
 };
 #endif

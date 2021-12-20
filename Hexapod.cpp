@@ -77,4 +77,8 @@ void Hexapod::SaveAnglesEEPROM(){
 		_leg[leg_num].SaveAnglesEEPROM();
 	}
 };
-
+void Hexapod::MoveInit(){
+	for(int leg_num=0; leg_num <=5;leg_num++){
+		_leg[leg_num].MoveInit();
+	}
+};

@@ -10,6 +10,7 @@ class Leg
   void MoveServo(int,bool,int);
   void info(bool);
   void SaveAnglesEEPROM();
+  void MoveInit();
   private:
     Servo _Servo[3];
 	int _leg_num;

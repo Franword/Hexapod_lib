@@ -37,3 +37,8 @@ void Leg::SaveAnglesEEPROM(){
 	_Servo[q2].SaveAnglesEEPROM();
 	_Servo[q3].SaveAnglesEEPROM();
 };
+void Leg::MoveInit(){
+	_Servo[q1].MoveInit();
+	_Servo[q2].MoveInit();
+	_Servo[q3].MoveInit();
+}

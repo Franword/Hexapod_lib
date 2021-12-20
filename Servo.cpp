@@ -65,6 +65,7 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 	else{
 		_inverse=false;
 	}
+	_id=3*leg_num+servo_num;
 	//serial
 	/*Serial.print(" q");
 	Serial.print(servo_num,DEC);
@@ -105,9 +106,18 @@ void Servo::info(bool if_current){
 	Serial.print(_angle);
 	}
 	else{
-		Serial.print(EEPROM.read(_address));
+		Serial.print(EEPROM.read(_id));
 	}
 }
 void Servo::SaveAnglesEEPROM(){
-	EEPROM.update(_address,_angle);
+	if(_inverse){ //inversing againg to set values using inversing xD
+		EEPROM.update(_id,180-_angle);
+	}
+	else{
+		EEPROM.update(_id,_angle);
+	}
+	
+};
+void Servo::MoveInit(){
+	MoveServo(int(EEPROM.read(_id)),false);
 };
