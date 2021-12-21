@@ -12,8 +12,11 @@ class Hexapod
   void info(bool);
   void SaveAnglesEEPROM();
   void MoveInit();
+  bool if_leg_active(byte);
+  void change_leg_pair();
   private:
 	PWM _pwm[2];
 	Leg _leg[6];
+  bool _leg_pair;
 };
 #endif

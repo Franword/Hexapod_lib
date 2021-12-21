@@ -10,6 +10,7 @@ Hexapod::Hexapod(){
 	_leg[L1]=Leg(L1,&_pwm[0]);
 	_leg[L2]=Leg(L2,&_pwm[0]);
 	_leg[L3]=Leg(L3,&_pwm[1]);
+	_leg_pair=true;
 	//serial
 	Serial.println("Hexapod created\n");
 };
@@ -48,7 +49,8 @@ void Hexapod::MoveLeg(int angle[3],bool relative,int leg_num){
 };
 void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 	//function
-	 for(int leg_num=0; leg_num <=5;leg_num++){
+	 for(byte leg_num=0; leg_num <=5;leg_num++){
+		 if(if_leg_active(leg_num)){
 		int temp[3]={angle[leg_num][q1],angle[leg_num][q2],angle[leg_num][q3]};
 		_leg[leg_num].MoveLeg(temp,relative);
 		//serial
@@ -65,6 +67,7 @@ void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 		Serial.print(", ");
 		Serial.print(angle[leg_num][q3]);
 		Serial.println("]");
+		}
 	};
 };
 void Hexapod::info(bool if_current){
@@ -81,4 +84,26 @@ void Hexapod::MoveInit(){
 	for(int leg_num=0; leg_num <=5;leg_num++){
 		_leg[leg_num].MoveInit();
 	}
+};
+
+bool Hexapod::if_leg_active(byte leg_num){
+	if(_leg_pair){
+		if(leg_num == R1 || leg_num == L2 || leg_num == R3){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	else{
+		if(leg_num == L1 || leg_num == R2 || leg_num == L3){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+};
+void Hexapod::change_leg_pair(){
+	_leg_pair=!_leg_pair;
 };
