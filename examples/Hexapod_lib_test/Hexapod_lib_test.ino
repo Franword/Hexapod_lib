@@ -4,13 +4,13 @@ Gamepad pad;
 int angle=1;
 int leg_angles[3]={0,10,-10};
 int hexapod_angles[6][3]={{1,2,3},{2,3,4},{4,5,6},{6,7,8},{9,10,11},{12,13,14}};
-int hexapod_angles_init[6][3]={{0,30,60},{0,30,60},{0,30,60},{0,30,60},{0,30,60},{0,30,60}};
+int hexapod_angles_init[6][3]={{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90}};
 String command;
 int leg_num=R1;
 int servo_num=q1;
 bool isrelative=true;
 Hexapod* hexapod_wsk;
-int number_of_moves=2;
+int number_of_moves=10;
 void setup()
 {
   Serial.begin(9600);
@@ -26,6 +26,7 @@ void setup()
     //Serial.print(hexapod_angles[leg_num][q]);
     }
   }*/
+  //hexapod_wsk->MoveInit();
 }
 void loop() {
   
@@ -76,11 +77,11 @@ void loop() {
       //}
     }
     else if (command.equals("MoveLeg")){
-      leg_angles[q1]=0;
+      leg_angles[q1]=angle;
       leg_angles[q2]=angle;
       leg_angles[q3]=-angle;
       for(int i=0;i<number_of_moves;i++){
-      hexapod_wsk->MoveLeg(leg_angles,isrelative,leg_num);
+        hexapod_wsk->MoveLeg(leg_angles,isrelative,leg_num);
       }
     }
     else if (command.equals("MoveServo")){
