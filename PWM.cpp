@@ -95,7 +95,7 @@ void PWM::SetPWM(int servo_address,int angle) //do edytowania bo nie wiem co rob
 	}
 	//function
 	int pulse =map(angle, 0, 180, min,max);
-	_pwm.setPWM(servo_address,0,angle);
+	_pwm.setPWM(servo_address,0,pulse);
 	//serial
 	Serial.print("PWM set, address- "); 
 	Serial.print(servo_address);

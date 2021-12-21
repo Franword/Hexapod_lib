@@ -119,5 +119,5 @@ void Servo::SaveAnglesEEPROM(){
 	
 };
 void Servo::MoveInit(){
-	MoveServo(int(EEPROM.read(_id)),false);
+	MoveServo(EEPROM.read(_id),false);
 };

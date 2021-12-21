@@ -13,6 +13,6 @@ class Leg
   void MoveInit();
   private:
     Servo _Servo[3];
-	int _leg_num;
+	byte _leg_num;
 };
 #endif

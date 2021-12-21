@@ -13,10 +13,10 @@ class Servo
   void SaveAnglesEEPROM();
   void MoveInit();
   private:
-  int _angle;
-  int _address;
+  byte _angle;
+  byte _address;
   bool _inverse;
   PWM* _PWM_wsk;
-  int _id;
+  byte _id;
 };
 #endif

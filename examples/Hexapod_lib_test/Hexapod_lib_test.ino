@@ -1,10 +1,10 @@
 #include <Hexapod_lib.h>
 
+Gamepad pad;
 int angle=1;
 int leg_angles[3]={0,10,-10};
-int hexapod_angles[6][3]={{10,20,30},{20,30,40},{40,50,60},{50,60,70},{60,70,80},{70,80,90}};
-int hexapod_angles_init[6][3]={{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},
-{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3},{SERVOMAX/2,SERVOMAX/3,SERVOMAX/3}};
+int hexapod_angles[6][3]={{1,2,3},{2,3,4},{4,5,6},{6,7,8},{9,10,11},{12,13,14}};
+int hexapod_angles_init[6][3]={{0,30,60},{0,30,60},{0,30,60},{0,30,60},{0,30,60},{0,30,60}};
 String command;
 int leg_num=R1;
 int servo_num=q1;
@@ -18,6 +18,7 @@ void setup()
     ; // wait for serial port to connect. Needed for native USB port only
   }
   hexapod_wsk = new Hexapod();
+  pad.setup();
   Serial.println("ready to go, type help if u want");
   /*for(int leg_num=0; leg_num <=5;leg_num++){
     for(int q=0; q <=2;q++){
@@ -27,6 +28,7 @@ void setup()
   }*/
 }
 void loop() {
+  
   if(Serial.available()){
     command = Serial.readStringUntil('\n');
     command.trim();
@@ -42,7 +44,7 @@ void loop() {
         Serial.print(", absolute");
       }
       Serial.print(", angle= ");
-      Serial.println(angle,DEC);
+      Serial.print(angle,DEC);
       Serial.print(", number of moves = ");
       Serial.println(number_of_moves);
     }
@@ -63,12 +65,15 @@ void loop() {
       hexapod_wsk->info(true);
     }
      else if(command.equals("init")){
+      hexapod_wsk->MoveInit();
+     }
+     else if(command.equals("init2")){
       hexapod_wsk->MoveHexapod(hexapod_angles_init,false);
      }
     else if(command.equals("MoveHexapod")){
-      for(int i=0;i<number_of_moves;i++){
+      //for(int i=0;i<number_of_moves;i++){
         hexapod_wsk->MoveHexapod(hexapod_angles,isrelative);
-      }
+      //}
     }
     else if (command.equals("MoveLeg")){
       leg_angles[q1]=0;
