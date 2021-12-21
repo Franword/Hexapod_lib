@@ -91,6 +91,8 @@ void Servo::MoveServo(int angle,bool relative)
 			angle=180-angle;
 		}
 	}
+	Serial.print("PWM address = ");
+	Serial.println();
 	_PWM_wsk->SetPWM(_address, angle);
 	_angle=angle;
 	//serial

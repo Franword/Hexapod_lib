@@ -2,7 +2,7 @@
 PWM::PWM(){};
 PWM::PWM(uint8_t address){
 	_address=address;
-	_pwm= Adafruit_PWMServoDriver();
+	_pwm= Adafruit_PWMServoDriver(_address);
 	_pwm.begin();
 	_pwm.setOscillatorFrequency(OSCILATOR_FREQ);
 	_pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
@@ -99,6 +99,9 @@ void PWM::SetPWM(int servo_address,int angle) //do edytowania bo nie wiem co rob
 	//serial
 	Serial.print("PWM set, address- "); 
 	Serial.print(servo_address);
+	Serial.print("PWM address- "); 
+	Serial.print(_address, HEX);
 	Serial.print(", pulse- ");
 	Serial.println(pulse);
+	
 };
