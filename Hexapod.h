@@ -17,6 +17,7 @@ class Hexapod
   private:
 	PWM _pwm[2];
 	Leg _leg[6];
+  //Servo _servo[6][3];
   bool _leg_pair;
 };
 #endif

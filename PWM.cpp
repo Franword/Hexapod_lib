@@ -93,12 +93,13 @@ void PWM::SetPWM(int servo_address,int angle) //do edytowania bo nie wiem co rob
 			break;
 		}
 	}
+	*/
 	//function
-	int pulse =map(angle, 0, 180, min,max);
+	int pulse =map(angle, 0, 180, SERVOMIN,SERVOMAX);
 	
 	_pwm.setPWM(servo_address,0,pulse);
-	*/
-_pwm.setPWM(servo_address,0,map(angle, 0, 180, SERVOMIN,SERVOMAX));
+	
+//_pwm.setPWM(servo_address,0,map(angle, 0, 180, SERVOMIN,SERVOMAX));
 	//serial
 	Serial.print("PWM set, address- "); 
 	Serial.print(servo_address);
