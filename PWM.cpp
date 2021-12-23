@@ -12,7 +12,7 @@ PWM::PWM(uint8_t address){
 	Serial.println(_address,HEX);*/
 };
 void PWM::SetPWM(int servo_address,int angle) //do edytowania bo nie wiem co robi to 0 xDD
-{
+{/*
 	int min;
 	int max;
 	if(_address==0x40){
@@ -95,7 +95,10 @@ void PWM::SetPWM(int servo_address,int angle) //do edytowania bo nie wiem co rob
 	}
 	//function
 	int pulse =map(angle, 0, 180, min,max);
+	
 	_pwm.setPWM(servo_address,0,pulse);
+	*/
+_pwm.setPWM(servo_address,0,map(angle, 0, 180, SERVOMIN,SERVOMAX));
 	//serial
 	Serial.print("PWM set, address- "); 
 	Serial.print(servo_address);

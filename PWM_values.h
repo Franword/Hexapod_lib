@@ -47,4 +47,7 @@
 #define SERVOMAX_L3q2  520
 #define SERVOMIN_L3q3  120
 #define SERVOMAX_L3q3  520
+
+#define SERVOMAX  520
+#define SERVOMIN 120
 #endif
