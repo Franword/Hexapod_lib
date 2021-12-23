@@ -1,6 +1,7 @@
 #ifndef HEXAPOD_H
 #define HEXAPOD_H
-#include "Leg.h"
+//#include "Leg.h"
+#include "Servo.h"
 #include "print.h"
 class Hexapod
 {
@@ -16,8 +17,7 @@ class Hexapod
   void change_leg_pair();
   private:
 	PWM _pwm[2];
-	Leg _leg[6];
-  //Servo _servo[6][3];
+  Servo _servo[6][3];
   bool _leg_pair;
 };
 #endif
