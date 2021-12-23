@@ -1,6 +1,7 @@
 #ifndef SERVO_H
 #define SERVO_H
 #include "PWM.h"
+#include "PWM_values.h"
 #include "Addresses.h"
 #include <EEPROM.h>
 class Servo

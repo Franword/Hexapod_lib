@@ -28,6 +28,8 @@ void Hexapod::MoveServo(int angle,bool relative,int leg_num,int servo_num){
 		}
 		Serial.print(angle);
 		Serial.println("]");
+		_pwm[0].Move();
+		_pwm[1].Move();
 };
 void Hexapod::MoveLeg(int angle[3],bool relative,int leg_num){
 	//function
@@ -46,6 +48,8 @@ void Hexapod::MoveLeg(int angle[3],bool relative,int leg_num){
 		Serial.print(", ");
 		Serial.print(angle[q3]);
 		Serial.println("]");
+		_pwm[0].Move();
+		_pwm[1].Move();
 };
 void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 	//function
@@ -69,6 +73,8 @@ void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 		Serial.println("]");
 		}
 	};
+	_pwm[0].Move();
+	_pwm[1].Move();
 };
 void Hexapod::info(bool if_current){
 	for(int leg_num=0; leg_num <=5;leg_num++){
@@ -84,6 +90,8 @@ void Hexapod::MoveInit(){
 	for(int leg_num=0; leg_num <=5;leg_num++){
 		_leg[leg_num].MoveInit();
 	}
+	_pwm[0].Move();
+	_pwm[1].Move();
 };
 
 bool Hexapod::if_leg_active(byte leg_num){

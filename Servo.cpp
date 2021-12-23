@@ -96,12 +96,12 @@ void Servo::MoveServo(int angle,bool relative)
 	_PWM_wsk->SetPWM(_address, angle);
 	_angle=angle;
 	//serial
-	/*Serial.print("Servo moved, angle- ");
+	Serial.print("Servo moved, angle- ");
 	Serial.print(angle);
 	Serial.print(", relative- ");
 	Serial.print(relative);
 	Serial.print(", inverse- ");
-	Serial.print(_inverse);*/
+	Serial.print(_inverse);
 };
 void Servo::info(bool if_current){
 	if(if_current){

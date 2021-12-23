@@ -98,13 +98,41 @@ void PWM::SetPWM(int servo_address,int angle) //do edytowania bo nie wiem co rob
 	
 	_pwm.setPWM(servo_address,0,pulse);
 	*/
-_pwm.setPWM(servo_address,0,map(angle, 0, 180, SERVOMIN,SERVOMAX));
+	_pulse[servo_address]=map(angle, 0, 180, SERVOMIN,SERVOMAX);
+	//_pwm.setPWM(servo_address,0,map(angle, 0, 180, SERVOMIN,SERVOMAX));
+/*
 	//serial
 	Serial.print("PWM set, address- "); 
 	Serial.print(servo_address);
 	Serial.print("PWM address- "); 
 	Serial.print(_address, HEX);
 	Serial.print(", pulse- ");
-	Serial.println(pulse);
+	Serial.println(_pulse[servo_address]);
+	*/
 	
+};
+void PWM::Move(){
+	if(_address==0x40)
+	{
+		for(byte ser_addr=0;ser_addr<9;ser_addr++){
+			_pwm.setPWM(ser_addr,0,_pulse[ser_addr]);
+			Serial.print("PWM::MOVE, address- "); 
+			Serial.print(ser_addr);
+			Serial.print("PWM address- "); 
+			Serial.print(_address, HEX);
+			Serial.print(", pulse- ");
+			Serial.println(_pulse[ser_addr]);
+		}
+	}
+	else{
+		for(byte ser_addr=15;ser_addr>6;ser_addr--){
+			_pwm.setPWM(ser_addr,0,_pulse[ser_addr]);
+			Serial.print("PWM::MOVE, address- "); 
+			Serial.print(ser_addr);
+			Serial.print("PWM address- "); 
+			Serial.print(_address, HEX);
+			Serial.print(", pulse- ");
+			Serial.println(_pulse[ser_addr]);
+		}
+	}
 };

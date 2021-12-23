@@ -14,9 +14,11 @@ class PWM
 	PWM();
 	PWM(uint8_t);
 	void SetPWM(int, int);
+	void Move();
 	
 	private:
 	Adafruit_PWMServoDriver _pwm;
 	uint8_t _address;
+	int _pulse[16];
 };
 #endif
