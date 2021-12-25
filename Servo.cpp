@@ -1,11 +1,14 @@
 #include "Servo.h"
+#include <Arduino.h>
 Servo::Servo(){};
-Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
+Servo::Servo(uint8_t leg_num,uint8_t servo_num)
 {
+	//converts leg number and servo number to pwm address and pwm number
 	//Serial.print("Servo ");
-	_PWM_wsk=PWM_wsk;
 	switch (leg_num) {
 		case R1:
+			_pwm_num=false;
+			_inverse=false;
 			//Serial.print ("R1 ");
 			if (servo_num==q1){
 				_address=R1q1;}
@@ -15,6 +18,8 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 				_address=R1q3;}
 		break;
 		case R2:
+			_pwm_num=true;
+			_inverse=false;
 			//Serial.print ("R2 ");
 			if (servo_num==q1){
 				_address=R2q1;}
@@ -24,6 +29,8 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 				_address=R2q3;}
 		break;
 		case R3:
+			_pwm_num=true;
+			_inverse=false;
 			//Serial.print ("R3 ");
 			if (servo_num==q1){
 				_address=R3q1;}
@@ -33,6 +40,8 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 				_address=R3q3;}
 		break;
 		case L1:
+			_pwm_num=false;
+			_inverse=true;
 			//Serial.print ("L1 ");
 			if (servo_num==q1){
 				_address=L1q1;}
@@ -42,6 +51,8 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 				_address=L1q3;}
 		break;
 		case L2:
+			_pwm_num=false;
+			_inverse=true;
 			//Serial.print ("L2 ");
 			if (servo_num==q1){
 				_address=L2q1;}
@@ -51,6 +62,8 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 				_address=L2q3;}
 		break;
 		case L3:
+			_pwm_num=true;
+			_inverse=true;
 			//Serial.print ("L3 ");
 			if (servo_num==q1){
 				_address=L3q1;}
@@ -58,12 +71,6 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 				_address=L3q2;}
 			if (servo_num==q3){
 				_address=L3q3;}
-	}
-	if(leg_num==L1 || leg_num==L2 ||leg_num==L3){
-		_inverse=true;
-	}
-	else{
-		_inverse=false;
 	}
 	_id=3*leg_num+servo_num;
 	//serial
@@ -75,7 +82,7 @@ Servo::Servo(int leg_num,int servo_num, PWM* PWM_wsk)
 	Serial.print(", inverse- ");
 	Serial.println(_inverse,DEC);*/
 };
-void Servo::MoveServo(int angle,bool relative)
+int Servo::MoveServo(uint8_t angle,bool relative)
 {
 	//Serial.println("\nServo::MoveServo");
 	if(relative){
@@ -91,10 +98,16 @@ void Servo::MoveServo(int angle,bool relative)
 			angle=180-angle;
 		}
 	}
-	Serial.print("PWM address = ");
-	Serial.println();
-	_PWM_wsk->SetPWM(_address, angle);
+	//_PWM_wsk->SetPWM(_address, angle);
+	/*_angle=angle;
+	Serial.print("angle ");
+	Serial.print(angle);
+	Serial.print(" ---> pulse ");*/
 	_angle=angle;
+	_pulse=map(angle, 0, 180, SERVOMIN,SERVOMAX);
+	//Serial.println(_pulse);
+	return _pulse;
+
 	//serial
 	/*Serial.print("Servo moved, angle- ");
 	Serial.print(angle);
@@ -110,7 +123,7 @@ void Servo::info(bool if_current){
 	else{
 		Serial.print(EEPROM.read(_id));
 	}
-}
+};
 void Servo::SaveAnglesEEPROM(){
 	if(_inverse){ //inversing againg to set values using inversing xD
 		EEPROM.update(_id,180-_angle);
@@ -118,8 +131,13 @@ void Servo::SaveAnglesEEPROM(){
 	else{
 		EEPROM.update(_id,_angle);
 	}
-	
 };
-void Servo::MoveInit(){
-	MoveServo(EEPROM.read(_id),false);
+int Servo::MoveInit(){
+	return _pulse=MoveServo(EEPROM.read(_id),false);
+};
+bool Servo::get_pwm_num(){
+	return _pwm_num;
+};
+uint8_t  Servo::get_pwm_address(){
+	return _address;
 };

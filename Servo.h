@@ -1,22 +1,25 @@
 #ifndef SERVO_H
 #define SERVO_H
-#include "PWM.h"
 #include "Addresses.h"
 #include <EEPROM.h>
+#include "PWM_values.h"
 class Servo
 {
   public:
   Servo();
-  Servo(int,int,PWM*);
-  void MoveServo(int,bool);
+  Servo(uint8_t,uint8_t);
+  int MoveServo(uint8_t,bool);
   void info(bool);
   void SaveAnglesEEPROM();
-  void MoveInit();
+  int MoveInit();
+  bool get_pwm_num();
+  uint8_t get_pwm_address();
   private:
-  byte _angle;
-  byte _address;
+  uint8_t _angle;
+  uint8_t _address;
+  uint16_t _pulse;
+  bool _pwm_num;
   bool _inverse;
-  PWM* _PWM_wsk;
-  byte _id;
+  uint8_t _id;
 };
 #endif
