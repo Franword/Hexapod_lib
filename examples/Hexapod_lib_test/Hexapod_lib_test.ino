@@ -1,16 +1,16 @@
 #include <Hexapod_lib.h>
 
 Gamepad pad;
-int angle=1;
+int angle=10;
 int leg_angles[3]={0,10,-10};
-int hexapod_angles[6][3]={{1,2,3},{2,3,4},{4,5,6},{6,7,8},{9,10,11},{12,13,14}};
+int hexapod_angles[6][3]={{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle}};
 int hexapod_angles_init[6][3]={{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90}};
 String command;
 int leg_num=R1;
 int servo_num=q1;
 bool isrelative=true;
 Hexapod* hexapod_wsk;
-int number_of_moves=10;
+int number_of_moves=1;
 void setup()
 {
   Serial.begin(9600);
@@ -57,7 +57,7 @@ void loop() {
       Serial.println("print info: info, help, current, calibrated");
       Serial.println("Save current angles to EEPROM : SaveAngles");
       Serial.println("change number of moves: -, +");
-      Serial.println("change one move length: angle-, angle+");
+      Serial.println("change one move length: angle-, angle+, angle!");
     }
     else if(command.equals("calibrated")){
       hexapod_wsk->info(false);
@@ -72,14 +72,19 @@ void loop() {
       hexapod_wsk->MoveHexapod(hexapod_angles_init,false);
      }
     else if(command.equals("MoveHexapod")){
-      //for(int i=0;i<number_of_moves;i++){
+      for(int i=0;i<6;i++){
+        hexapod_angles[i][0]=0;
+        hexapod_angles[i][1]=angle;
+        hexapod_angles[i][2]=angle;
+      };
+      for(int i=0;i<number_of_moves;i++){
         hexapod_wsk->MoveHexapod(hexapod_angles,isrelative);
-      //}
+      }
     }
     else if (command.equals("MoveLeg")){
-      leg_angles[q1]=angle;
+      leg_angles[q1]=0;
       leg_angles[q2]=angle;
-      leg_angles[q3]=-angle;
+      leg_angles[q3]=angle;
       for(int i=0;i<number_of_moves;i++){
         hexapod_wsk->MoveLeg(leg_angles,isrelative,leg_num);
       }
@@ -89,6 +94,10 @@ void loop() {
           hexapod_wsk->MoveServo(angle,isrelative,leg_num,servo_num);
        }
     }
+    else if (command.equals("par")){
+       hexapod_wsk->change_leg_pair();
+    }
+    
     else if (command.equals("R1")){
       leg_num=R1;
       Serial.println("leg_num = R1");
@@ -147,12 +156,17 @@ void loop() {
       Serial.println(number_of_moves);
     }
     else if (command.equals("angle-")){
-      angle=angle-1;
+      angle-=10;
       Serial.print("angle = ");
       Serial.println(angle);
     }
     else if (command.equals("angle+")){
-      angle=angle+1;
+      angle+=10;
+      Serial.print("angle = ");
+      Serial.println(angle);
+    }
+    else if (command.equals("angle!")){
+      angle=-angle;
       Serial.print("angle = ");
       Serial.println(angle);
     }
