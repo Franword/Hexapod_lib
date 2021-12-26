@@ -1,7 +1,7 @@
 #include "Servo.h"
 #include <Arduino.h>
 Servo::Servo(){};
-Servo::Servo(uint8_t leg_num,uint8_t servo_num)
+void Servo::ServoSetup(uint8_t leg_num,uint8_t servo_num)
 {
 	//converts leg number and servo number to pwm address and pwm number
 	//Serial.print("Servo ");

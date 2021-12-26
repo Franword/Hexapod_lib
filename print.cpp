@@ -11,7 +11,7 @@ void print_servo_num(int servo_num){
 		Serial.print("q3");
 		break;
 	}
-}
+};
 void print_leg_num(int leg_num){
 	switch (leg_num){
 		case R1:
@@ -33,4 +33,4 @@ void print_leg_num(int leg_num){
 		Serial.print("L3");
 		break;
 	}
-}
+};

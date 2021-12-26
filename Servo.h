@@ -7,7 +7,7 @@ class Servo
 {
   public:
   Servo();
-  Servo(uint8_t,uint8_t);
+  ServoSetup(uint8_t,uint8_t);
   int MoveServo(uint8_t,bool);
   void info(bool);
   void SaveAnglesEEPROM();

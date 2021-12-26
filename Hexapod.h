@@ -10,6 +10,7 @@ class Hexapod
 {
   public:
   Hexapod();
+  void Setup();
   void MoveLeg(int[3],bool,int);
   void MoveServo(int,bool,int,int);
   void MoveHexapod(int[6][3],bool);
