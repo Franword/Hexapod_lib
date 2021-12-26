@@ -6,14 +6,14 @@ void Hexapod::Setup(){
 	Serial.println("Creating Hexapod");
 	//_pwm[0] = PWM(0x40);
 	//_pwm[1] = PWM(0x41);
-	for(byte leg_num=0;leg_num<6;leg_num++){
-		for(byte servo_num=0;servo_num<3;servo_num++)
+	for(uint8_t leg_num=0;leg_num<6;leg_num++){
+		for(uint8_t servo_num=0;servo_num<3;servo_num++)
 		{
 			if(leg_num==R1 ||leg_num==L1 ||leg_num==L2){
-				_servo[leg_num][servo_num].ServoSetup(leg_num,servo_num);
+				_servo[leg_num][servo_num].Setup(leg_num,servo_num);
 			}
 			else{
-				_servo[leg_num][servo_num].ServoSetup(leg_num,servo_num);
+				_servo[leg_num][servo_num].Setup(leg_num,servo_num);
 			}
 		}
 	_pwm[0]=Adafruit_PWMServoDriver();

@@ -7,7 +7,7 @@ class Servo
 {
   public:
   Servo();
-  ServoSetup(uint8_t,uint8_t);
+  void Setup(uint8_t,uint8_t);
   int MoveServo(uint8_t,bool);
   void info(bool);
   void SaveAnglesEEPROM();
@@ -16,6 +16,7 @@ class Servo
   uint8_t get_pwm_address();
   private:
   uint8_t _angle;
+  int _offset;
   uint8_t _address;
   uint16_t _pulse;
   bool _pwm_num;

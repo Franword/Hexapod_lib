@@ -1,8 +1,9 @@
 #include "Servo.h"
 #include <Arduino.h>
 Servo::Servo(){};
-void Servo::ServoSetup(uint8_t leg_num,uint8_t servo_num)
+void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 {
+	//_offset=0;
 	//converts leg number and servo number to pwm address and pwm number
 	//Serial.print("Servo ");
 	switch (leg_num) {
@@ -73,6 +74,7 @@ void Servo::ServoSetup(uint8_t leg_num,uint8_t servo_num)
 				_address=L3q3;}
 	}
 	_id=3*leg_num+servo_num;
+	MoveInit();
 	//serial
 	/*Serial.print(" q");
 	Serial.print(servo_num,DEC);
@@ -95,7 +97,10 @@ int Servo::MoveServo(uint8_t angle,bool relative)
 	}
 	else{
 		if(_inverse){
-			angle=180-angle;
+			angle=180-angle-_offset;
+		}
+		else{
+			angle=angle+_offset;
 		}
 	}
 	//_PWM_wsk->SetPWM(_address, angle);
@@ -133,7 +138,16 @@ void Servo::SaveAnglesEEPROM(){
 	}
 };
 int Servo::MoveInit(){
-	return _pulse=MoveServo(EEPROM.read(_id),false);
+	//return _pulse=MoveServo(EEPROM.read(_id),false);
+	_offset = EEPROM.read(_id)-90;
+
+	if(_inverse){
+			_angle=90-_offset;
+		}
+		else{
+			_angle=90+_offset;
+		}
+	 return _pulse=map(_angle, 0, 180, SERVOMIN,SERVOMAX);
 };
 bool Servo::get_pwm_num(){
 	return _pwm_num;
