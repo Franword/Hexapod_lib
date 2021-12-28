@@ -11,12 +11,13 @@ class Hexapod
   public:
   Hexapod();
   void Setup();
-  void MoveLeg(int[3],bool,int);
-  void MoveServo(int,bool,int,int);
+  void MoveLeg(int[3],bool,uint8_t);
+  void MoveServo(int,bool,uint8_t,uint8_t);
   void MoveHexapod(int[6][3],bool);
   void Move(uint8_t,uint8_t);
   void info(bool);
   void SaveAnglesEEPROM();
+  void SetOffset();
   void MoveInit();
   bool if_leg_active(byte);
   void change_leg_pair();

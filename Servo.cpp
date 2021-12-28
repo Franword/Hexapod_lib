@@ -123,7 +123,12 @@ int Servo::MoveServo(uint8_t angle,bool relative)
 };
 void Servo::info(bool if_current){
 	if(if_current){
-	Serial.print(_angle);
+		if(_inverse){
+			Serial.print(180-(_angle+_offset));
+		}
+		else{
+			Serial.print(_angle-_offset);
+		}
 	}
 	else{
 		Serial.print(EEPROM.read(_id));
@@ -137,9 +142,17 @@ void Servo::SaveAnglesEEPROM(){
 		EEPROM.update(_id,_angle);
 	}
 };
+void Servo::SetOffset(){
+	if(_inverse){ //inversing againg to set values using inversing xD
+		EEPROM.update(18+_id,180-_angle);
+	}
+	else{
+		EEPROM.update(18+_id,_angle);
+	}
+};
 int Servo::MoveInit(){
 	//return _pulse=MoveServo(EEPROM.read(_id),false);
-	_offset = EEPROM.read(_id)-90;
+	_offset = EEPROM.read(18+_id)-90;
 
 	if(_inverse){
 			_angle=90-_offset;

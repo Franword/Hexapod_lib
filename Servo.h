@@ -11,6 +11,7 @@ class Servo
   int MoveServo(uint8_t,bool);
   void info(bool);
   void SaveAnglesEEPROM();
+  void SetOffset();
   int MoveInit();
   bool get_pwm_num();
   uint8_t get_pwm_address();

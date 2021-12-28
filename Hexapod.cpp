@@ -30,7 +30,7 @@ void Hexapod::Setup(){
 	//serial
 	Serial.println("Hexapod created\n");
 };
-void Hexapod::MoveServo(int angle,bool relative,int leg_num,int servo_num){
+void Hexapod::MoveServo(int angle,bool relative,uint8_t leg_num,uint8_t servo_num){
 	//function
 	_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].MoveServo(angle,relative);
 	//serial
@@ -46,7 +46,7 @@ void Hexapod::MoveServo(int angle,bool relative,int leg_num,int servo_num){
 		Serial.println("]");
 		Move(leg_num,servo_num);
 };
-void Hexapod::MoveLeg(int angle[3],bool relative,int leg_num){
+void Hexapod::MoveLeg(int angle[3],bool relative,uint8_t leg_num){
 	//function
 	for(int servo_num=0;servo_num<3;servo_num++){
 		_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].MoveServo(angle[servo_num],relative);
@@ -122,11 +122,22 @@ void Hexapod::SaveAnglesEEPROM(){
 		Serial.println("]");
 	}
 };
+void Hexapod::SetOffset(){
+	for(int leg_num=0; leg_num <=5;leg_num++){
+		print_leg_num(leg_num);
+		Serial.print(" [");
+		for(int servo_num=0;servo_num<3;servo_num++){
+			_servo[leg_num][servo_num].SetOffset();
+			Serial.print(" ");
+		}
+		Serial.println("]");
+	}
+};
 void Hexapod::MoveInit(){
 	for(int leg_num=0; leg_num <=5;leg_num++){
 		for(int servo_num=0;servo_num<3;servo_num++)
 		{
-			_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].MoveInit();
+				_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].MoveInit();
 		}
 	}
 	for(int leg_num=0; leg_num <=5;leg_num++){
@@ -158,5 +169,7 @@ void Hexapod::change_leg_pair(){
 	_leg_pair=!_leg_pair;
 };
 void Hexapod::Move(uint8_t leg_num,uint8_t servo_num){
+	if(!(leg_num==R3 && servo_num ==q2)){
 	_pwm[_servo[leg_num][servo_num].get_pwm_num()].setPWM(_servo[leg_num][servo_num].get_pwm_address(),0, _pulse[leg_num][servo_num]);
+	}
 };
