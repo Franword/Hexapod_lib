@@ -73,7 +73,7 @@ void Hexapod::MoveLeg(int angle[3],bool relative,uint8_t leg_num){
 void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 	//function
 	 for(byte leg_num=0; leg_num <=5;leg_num++){
-		 if(if_leg_active(leg_num)){
+		 //if(if_leg_active(leg_num)){
 		for(int servo_num=0;servo_num<3;servo_num++){
 			_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].MoveServo(angle[leg_num][servo_num],relative);
 		}
@@ -91,7 +91,7 @@ void Hexapod::MoveHexapod(int angle[6][3],bool relative){
 		Serial.print(", ");
 		Serial.print(angle[leg_num][q3]);
 		Serial.println("]");
-		}
+		//}
 	};
 	for(int leg_num=0; leg_num <=5;leg_num++){
 		for(int servo_num=0;servo_num<3;servo_num++)
@@ -111,41 +111,25 @@ void Hexapod::info(bool if_current){
 		Serial.println("]");
 	}
 };
-void Hexapod::SaveAnglesEEPROM(){
-	for(int leg_num=0; leg_num <=5;leg_num++){
-		print_leg_num(leg_num);
-		Serial.print(" [");
-		for(int servo_num=0;servo_num<3;servo_num++){
-			_servo[leg_num][servo_num].SaveAnglesEEPROM();
-			Serial.print(" ");
-		}
-		Serial.println("]");
-	}
-};
 void Hexapod::SetOffset(){
 	for(int leg_num=0; leg_num <=5;leg_num++){
+		for(int servo_num=0;servo_num<3;servo_num++){
+			_servo[leg_num][servo_num].SetOffset();
+		}
+	}
+	Serial.println("offset values have been saved to EEPROM");
+};
+void Hexapod::ReadOffset(){
+	for(int leg_num=0; leg_num <=5;leg_num++){
 		print_leg_num(leg_num);
 		Serial.print(" [");
 		for(int servo_num=0;servo_num<3;servo_num++){
-			_servo[leg_num][servo_num].SetOffset();
+			_servo[leg_num][servo_num].ReadOffset();
 			Serial.print(" ");
 		}
 		Serial.println("]");
 	}
-};
-void Hexapod::MoveInit(){
-	for(int leg_num=0; leg_num <=5;leg_num++){
-		for(int servo_num=0;servo_num<3;servo_num++)
-		{
-				_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].MoveInit();
-		}
-	}
-	for(int leg_num=0; leg_num <=5;leg_num++){
-		for(int servo_num=0;servo_num<3;servo_num++)
-		{
-			Move(leg_num,servo_num);
-		}
-	}
+	Serial.println("offset values have beend read from EEPROM");
 };
 bool Hexapod::if_leg_active(byte leg_num){
 	if(_leg_pair){

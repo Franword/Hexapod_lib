@@ -74,7 +74,11 @@ void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 				_address=L3q3;}
 	}
 	_id=3*leg_num+servo_num;
-	MoveInit();
+
+	ReadOffset();
+	MoveServo(90,false);
+	
+	//MoveInit();
 	//serial
 	/*Serial.print(" q");
 	Serial.print(servo_num,DEC);
@@ -102,6 +106,14 @@ int Servo::MoveServo(uint8_t angle,bool relative)
 		else{
 			angle=angle+_offset;
 		}
+	}
+	if(angle<0){
+		angle=0;
+		Serial.println("ERROR: out of range");
+	}
+	if(angle>180){
+		angle=180;
+		Serial.println("ERROR: out of range");
 	}
 	//_PWM_wsk->SetPWM(_address, angle);
 	/*_angle=angle;
@@ -131,36 +143,22 @@ void Servo::info(bool if_current){
 		}
 	}
 	else{
-		Serial.print(EEPROM.read(_id));
-	}
-};
-void Servo::SaveAnglesEEPROM(){
-	if(_inverse){ //inversing againg to set values using inversing xD
-		EEPROM.update(_id,180-_angle);
-	}
-	else{
-		EEPROM.update(_id,_angle);
+		Serial.print(_offset);
 	}
 };
 void Servo::SetOffset(){
 	if(_inverse){ //inversing againg to set values using inversing xD
-		EEPROM.update(18+_id,180-_angle);
+		EEPROM.update(_id,128+(180-_angle)-90);
 	}
 	else{
-		EEPROM.update(18+_id,_angle);
+		EEPROM.update(_id,128+_angle-90);
 	}
+	
 };
-int Servo::MoveInit(){
+void Servo::ReadOffset(){
 	//return _pulse=MoveServo(EEPROM.read(_id),false);
-	_offset = EEPROM.read(18+_id)-90;
-
-	if(_inverse){
-			_angle=90-_offset;
-		}
-		else{
-			_angle=90+_offset;
-		}
-	 return _pulse=map(_angle, 0, 180, SERVOMIN,SERVOMAX);
+	_offset =EEPROM.read(_id)-128;
+	Serial.print(_offset);
 };
 bool Servo::get_pwm_num(){
 	return _pwm_num;

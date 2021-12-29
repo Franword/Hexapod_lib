@@ -16,9 +16,8 @@ class Hexapod
   void MoveHexapod(int[6][3],bool);
   void Move(uint8_t,uint8_t);
   void info(bool);
-  void SaveAnglesEEPROM();
+  void ReadOffset();
   void SetOffset();
-  void MoveInit();
   bool if_leg_active(byte);
   void change_leg_pair();
   private:
