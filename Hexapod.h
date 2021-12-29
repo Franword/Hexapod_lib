@@ -18,14 +18,14 @@ class Hexapod
   void info(bool);
   void ReadOffset();
   void SetOffset();
-  bool if_leg_active(byte);
+  bool if_leg_active(uint8_t);
   void change_leg_pair();
   private:
 	//PWM _pwm[2];
   Adafruit_PWMServoDriver _pwm[2];
   Servo _servo[6][3];
   bool _leg_pair;
-  int _pulse[6][3];
+  uint16_t _pulse[6][3];
   
 };
 #endif

@@ -131,7 +131,7 @@ void Hexapod::ReadOffset(){
 	}
 	Serial.println("offset values have beend read from EEPROM");
 };
-bool Hexapod::if_leg_active(byte leg_num){
+bool Hexapod::if_leg_active(uint8_t leg_num){
 	if(_leg_pair){
 		if(leg_num == R1 || leg_num == L2 || leg_num == R3){
 			return true;

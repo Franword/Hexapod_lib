@@ -3,9 +3,6 @@
 Servo::Servo(){};
 void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 {
-	//_offset=0;
-	//converts leg number and servo number to pwm address and pwm number
-	//Serial.print("Servo ");
 	switch (leg_num) {
 		case R1:
 			_pwm_num=false;
@@ -77,18 +74,8 @@ void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 
 	ReadOffset();
 	MoveServo(90,false);
-	
-	//MoveInit();
-	//serial
-	/*Serial.print(" q");
-	Serial.print(servo_num,DEC);
-	Serial.print(" created");
-	Serial.print(", adress- ");
-	Serial.print(_address,DEC);
-	Serial.print(", inverse- ");
-	Serial.println(_inverse,DEC);*/
 };
-int Servo::MoveServo(uint8_t angle,bool relative)
+uint16_t Servo::MoveServo(uint8_t angle,bool relative)
 {
 	//Serial.println("\nServo::MoveServo");
 	if(relative){
@@ -115,23 +102,9 @@ int Servo::MoveServo(uint8_t angle,bool relative)
 		angle=180;
 		Serial.println("ERROR: out of range");
 	}
-	//_PWM_wsk->SetPWM(_address, angle);
-	/*_angle=angle;
-	Serial.print("angle ");
-	Serial.print(angle);
-	Serial.print(" ---> pulse ");*/
 	_angle=angle;
-	_pulse=map(angle, 0, 180, SERVOMIN,SERVOMAX);
+	return map(angle, 0, 180, SERVOMIN,SERVOMAX);
 	//Serial.println(_pulse);
-	return _pulse;
-
-	//serial
-	/*Serial.print("Servo moved, angle- ");
-	Serial.print(angle);
-	Serial.print(", relative- ");
-	Serial.print(relative);
-	Serial.print(", inverse- ");
-	Serial.print(_inverse);*/
 };
 void Servo::info(bool if_current){
 	if(if_current){
@@ -153,7 +126,6 @@ void Servo::SetOffset(){
 	else{
 		EEPROM.update(_id,128+_angle-90);
 	}
-	
 };
 void Servo::ReadOffset(){
 	//return _pulse=MoveServo(EEPROM.read(_id),false);
