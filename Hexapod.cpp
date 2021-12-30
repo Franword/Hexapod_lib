@@ -27,6 +27,7 @@ void Hexapod::Setup(){
 	_pwm[1].setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 	}
 	_leg_pair=true;
+	_kin=Kinematics(80, 150);
 	//serial
 	Serial.println("Hexapod created\n");
 };
@@ -153,7 +154,25 @@ void Hexapod::change_leg_pair(){
 	_leg_pair=!_leg_pair;
 };
 void Hexapod::Move(uint8_t leg_num,uint8_t servo_num){
-	if(!(leg_num==R3 && servo_num ==q2)){
+	//if(!(leg_num==R3 && servo_num ==q3)){
+	if(leg_num==R1){	
 	_pwm[_servo[leg_num][servo_num].get_pwm_num()].setPWM(_servo[leg_num][servo_num].get_pwm_address(),0, _pulse[leg_num][servo_num]);
 	}
+};
+void Hexapod::inv_kin(int x, int y, int z,uint8_t leg_num){
+	_kin.moveToPosition(x,y,z);
+	Angle a;
+	int angle[3];
+	a = _kin.getAngles();
+	_kin.printAngles();
+  if(leg_num==0 || leg_num==1 ||leg_num ==2){
+    angle[0]=90+int(a.theta3);
+  }
+  else{
+    angle[0]=90-int(a.theta3);
+  }
+  angle[1]=90-int(a.theta1);
+  angle[2]=180+int(a.theta2);
+
+  MoveLeg(angle,false,leg_num);
 };

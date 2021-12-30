@@ -95,11 +95,11 @@ uint16_t Servo::MoveServo(uint8_t angle,bool relative)
 		}
 	}
 	if(angle<0){
-		angle=0;
+		angle=90;
 		Serial.println("ERROR: out of range");
 	}
 	if(angle>180){
-		angle=180;
+		angle=90;
 		Serial.println("ERROR: out of range");
 	}
 	_angle=angle;

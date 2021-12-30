@@ -6,6 +6,7 @@
 #include "print.h"
 #include "PWM_values.h"
 #include "Addresses.h"
+#include <Kinematics.h>
 class Hexapod
 {
   public:
@@ -20,12 +21,15 @@ class Hexapod
   void SetOffset();
   bool if_leg_active(uint8_t);
   void change_leg_pair();
+  void inv_kin(int,int,int,uint8_t);
   private:
 	//PWM _pwm[2];
   Adafruit_PWMServoDriver _pwm[2];
   Servo _servo[6][3];
   bool _leg_pair;
   uint16_t _pulse[6][3];
-  
+  const int a2=80;
+  const int a3=150;
+  Kinematics _kin;
 };
 #endif
