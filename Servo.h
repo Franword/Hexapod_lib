@@ -8,7 +8,7 @@ class Servo
   public:
   Servo();
   void Setup(uint8_t,uint8_t);
-  uint16_t MoveServo(uint8_t,bool);
+  uint16_t SetServoAngle(uint8_t,bool);
   void info(bool);
   void SetOffset();
   void  ReadOffset();

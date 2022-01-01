@@ -73,11 +73,11 @@ void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 	_id=3*leg_num+servo_num;
 
 	ReadOffset();
-	//MoveServo(90,false);
+	//SetServoAngle(90,false);
 };
-uint16_t Servo::MoveServo(uint8_t angle,bool relative)
+uint16_t Servo::SetServoAngle(uint8_t angle,bool relative)
 {
-	//Serial.println("\nServo::MoveServo");
+	//Serial.println("\nServo::SetServoAngle");
 	if(relative){
 		if(_inverse){
 			angle=_angle-angle;
@@ -128,7 +128,7 @@ void Servo::SetOffset(){
 	}
 };
 void Servo::ReadOffset(){
-	//return _pulse=MoveServo(EEPROM.read(_id),false);
+	//return _pulse=SetServoAngle(EEPROM.read(_id),false);
 	_offset =EEPROM.read(_id)-128;
 	Serial.print(_offset);
 };
