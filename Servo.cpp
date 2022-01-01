@@ -73,7 +73,7 @@ void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 	_id=3*leg_num+servo_num;
 
 	ReadOffset();
-	MoveServo(90,false);
+	//MoveServo(90,false);
 };
 uint16_t Servo::MoveServo(uint8_t angle,bool relative)
 {
@@ -137,4 +137,12 @@ bool Servo::get_pwm_num(){
 };
 uint8_t  Servo::get_pwm_address(){
 	return _address;
+};
+uint8_t Servo::get_angle(){
+	if(_inverse){
+			return 180-(_angle+_offset);
+		}
+		else{
+			return _angle-_offset;
+		}
 };

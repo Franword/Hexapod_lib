@@ -14,7 +14,7 @@ class Servo
   void  ReadOffset();
   bool get_pwm_num();
   uint8_t get_pwm_address();
-
+  uint8_t get_angle();
   private:
   uint8_t _angle;
   int8_t _offset;
