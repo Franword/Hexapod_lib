@@ -93,6 +93,14 @@ void Hexapod::SetLegAngle(int angle[3],bool relative,uint8_t leg_num){
 		Serial.println("]");
 };
 void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
+	float d2;
+	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
+		
+		d2=-D2;
+	}
+	else{
+		d2=D2;
+	}
 	int x, y, z;
 	if(relative){
 		x=pos[0]+_pos[leg_num][0];
@@ -102,20 +110,16 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	_pos[leg_num][0]=x;
 	_pos[leg_num][1]=y;
 	_pos[leg_num][2]=z;
+	int t1=int(degrees(2*atan2((x - sqrt(- pow(d2,2) + pow(x,2) + pow(y,2))),d2 - y)));
+	//int t3=int(degrees(acos(((pow(x*cos(t1) + y*sin(t1)-a1),2) + pow(z,2)  - pow(a2,2) - pow(a3,2))/(2*a2*a3)))); //to naprawic
+	int t3= int(degrees(180-acos((pow(a2,2)/2 + pow(a3,2)/2 - pow(z,2)/2 - pow((x*cos(q1) - a1 + y*sin(q1)),2)/2)/(a2*a3))));
+	int t2=int(degrees(atan2(z , x*cos(t1) + y*sin(t1) - a1)  -  atan2( a3*sin(t3) , a2+a3*cos(t3))));
 
-	float xPrime = sqrt(pow(x, 2) + pow(y, 2));
-	float theta1 = degrees(atan(y/x));
-  	float theta3 = -degrees(acos((pow(xPrime, 2) + pow(z, 2) - pow(a2, 2) - pow(a3, 2))/(2 * a2 * a3)));
-  	float theta2 = degrees(atan(z/xPrime) - atan((a3 * sin(radians(theta3)))/(a2 + a3 * cos(radians(theta3)))));
 	int angle[3];
-  if(leg_num==0 || leg_num==1 ||leg_num ==2){
-    angle[0]=90+int(theta1);
-  }
-  else{
-    angle[0]=90-int(theta1);
-  }
-  angle[1]=90-int(theta2);
-  angle[2]=180+int(theta3);
+	angle[q1]=(90-t1)%360;
+	angle[q2]=(90-t2)%360;
+	angle[q3]=(t3-180)%360;
+
   //function
 	for(int servo_num=0;servo_num<3;servo_num++){
 		_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].SetServoAngle(angle[servo_num],false);
