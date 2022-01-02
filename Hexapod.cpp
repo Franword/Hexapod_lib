@@ -4,8 +4,6 @@ Hexapod::Hexapod(){
 }
 void Hexapod::Setup(){
 	Serial.println("Creating Hexapod");
-	//_pwm[0] = PWM(0x40);
-	//_pwm[1] = PWM(0x41);
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
 		for(uint8_t servo_num=0;servo_num<3;servo_num++)
 		{
@@ -27,7 +25,6 @@ void Hexapod::Setup(){
 	_pwm[1].setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 	}
 	_leg_pair=true;
-	//_kin=Kinematics(80, 150);
 	//serial
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
 		for(uint8_t servo_num=0;servo_num<3;servo_num++){
@@ -36,7 +33,6 @@ void Hexapod::Setup(){
 	}
 	Serial.println("Hexapod created\n");
 };
-
 //*********************************************************************************************************************************************
 void Hexapod::SetServoAngle(int angle,bool relative,uint8_t leg_num,uint8_t servo_num){
 	//function
@@ -97,8 +93,6 @@ void Hexapod::SetLegAngle(int angle[3],bool relative,uint8_t leg_num){
 		Serial.println("]");
 };
 void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
-	//inv_kin
-	//pos[0]=x, pos[1]=y, pos[2]=z
 	int x, y, z;
 	if(relative){
 		x=pos[0]+_pos[leg_num][0];
@@ -178,7 +172,6 @@ void Hexapod::SetHexapodAngle(int angle[6][3],bool relative){
 			angles_to_update_pos[2]= _servo[leg_num][q3].get_angle();
 			dir_kin(angles_to_update_pos, leg_num);
 		}
-		
 		//serial
 		print_leg_num(leg_num);
 		if(relative){
@@ -206,9 +199,6 @@ void Hexapod::SetHexapodAngle(int angle[6][3],bool relative){
 			MoveServo(leg_num,servo_num);
 		}
 	}
-};
-void Hexapod::SetHexapodPos(int pos[6][3],bool relative){
-
 };
 void Hexapod::MoveHexapod(){
 for(uint8_t leg_num=0;leg_num<6;leg_num++){

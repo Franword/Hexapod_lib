@@ -128,7 +128,6 @@ void Servo::SetOffset(){
 	}
 };
 void Servo::ReadOffset(){
-	//return _pulse=SetServoAngle(EEPROM.read(_id),false);
 	_offset =EEPROM.read(_id)-128;
 	Serial.print(_offset);
 };
