@@ -102,8 +102,7 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	_pos[leg_num][0]=x;
 	_pos[leg_num][1]=y;
 	_pos[leg_num][2]=z;
-	float a2=80;
-	float a3=150;
+
 	float xPrime = sqrt(pow(x, 2) + pow(y, 2));
 	float theta1 = degrees(atan(y/x));
   	float theta3 = -degrees(acos((pow(xPrime, 2) + pow(z, 2) - pow(a2, 2) - pow(a3, 2))/(2 * a2 * a3)));
@@ -138,20 +137,23 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 		Serial.println("]");
 };
 void Hexapod::dir_kin(int angle[3], uint8_t leg_num){
-	float theta1;
-	 if(leg_num==0 || leg_num==1 ||leg_num ==2){
-    	theta1=float(angle[0]-90);
-  	}
-  	else{
-    	theta1=float(90-angle[0]);
-  	}
-	float theta2=float(90-angle[1]);
-  	float theta3=float(angle[2]-180);
+	float d2;
+	float t1;
+	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
+		t1=radians(float((90-angle[0])%360));
+		d2=-D2;
+	}
+	else{
+		t1=radians(float((angle[0]-90)%360));
+		d2=D2;
+	}
+	//float t1=radians(float((90-angle[0])%360));
+	float t2=radians(float((90-angle[1])%360));
+	float t3=radians(float((180+angle[2])%360));
 
-	float xPrime = a2 * cos(radians(theta2)) + a3 * cos(radians(theta2) + radians(theta3));
-	_pos[leg_num][0] = int(xPrime * cos(radians(theta1)));
-	_pos[leg_num][1] = int(xPrime * sin(radians(theta1)));
-	_pos[leg_num][2] = int(a2 * sin(radians(theta2)) + a3 * sin(radians(theta2) + radians(theta3)));
+	_pos[leg_num][0] =int(a1*cos(t1) - a3*(cos(t1)*sin(t2)*sin(t3) - cos(t1)*cos(t2)*cos(t3)) + d2*sin(t1) + a2*cos(t1)*cos(t2));
+	_pos[leg_num][1] =int(a1*sin(t1) - d2*cos(t1) - a3*(sin(t1)*sin(t2)*sin(t3) - cos(t2)*cos(t3)*sin(t1)) + a2*cos(t2)*sin(t1));
+	_pos[leg_num][2] =int(a3*sin(t2 + t3) + a2*sin(t2));
 };
 void Hexapod::MoveLeg(uint8_t leg_num){
 	for(int servo_num=0;servo_num<3;servo_num++){

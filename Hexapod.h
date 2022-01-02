@@ -5,6 +5,7 @@
 #include "print.h"
 #include "PWM_values.h"
 #include "Addresses.h"
+#include "ZDH_par.h"
 class Hexapod
 {
   public:
@@ -29,8 +30,6 @@ class Hexapod
   int _pos[6][3];
   bool _leg_pair;
   uint16_t _pulse[6][3];
-  const int a2=80;
-  const int a3=150;
 };
 #endif
 
