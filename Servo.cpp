@@ -95,12 +95,18 @@ uint16_t Servo::SetServoAngle(uint8_t angle,bool relative)
 		}
 	}
 	if(angle<0){
+		Serial.print("angle=");
+		Serial.print(angle);
+		Serial.print(", Servo_num= q");
+		Serial.println(_id%3+1);
 		angle=90;
-		Serial.println("ERROR: out of range");
 	}
 	if(angle>180){
+		Serial.print("angle=");
+		Serial.print(angle);
+		Serial.print(", Servo_num= q");
+		Serial.println(_id%3+1);
 		angle=90;
-		Serial.println("ERROR: out of range");
 	}
 	_angle=angle;
 	return map(angle, 0, 180, SERVOMIN,SERVOMAX);
@@ -129,7 +135,7 @@ void Servo::SetOffset(){
 };
 void Servo::ReadOffset(){
 	_offset =EEPROM.read(_id)-128;
-	Serial.print(_offset);
+	//Serial.print(_offset);
 };
 bool Servo::get_pwm_num(){
 	return _pwm_num;

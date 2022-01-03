@@ -96,7 +96,7 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	float d2;
 	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
 		
-		d2=-D2;
+		d2=D2;
 	}
 	else{
 		d2=D2;
@@ -110,15 +110,24 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	_pos[leg_num][0]=x;
 	_pos[leg_num][1]=y;
 	_pos[leg_num][2]=z;
-	int t1=int(degrees(2*atan2((x - sqrt(- pow(d2,2) + pow(x,2) + pow(y,2))),d2 - y)));
+	int t1=int(degrees(2*atan2((x - sqrt(- pow(d2,2) + pow(x,2) + pow(y,2))),d2 - y)))%360;
 	//int t3=int(degrees(acos(((pow(x*cos(t1) + y*sin(t1)-a1),2) + pow(z,2)  - pow(a2,2) - pow(a3,2))/(2*a2*a3)))); //to naprawic
-	int t3= int(degrees(180-acos((pow(a2,2)/2 + pow(a3,2)/2 - pow(z,2)/2 - pow((x*cos(q1) - a1 + y*sin(q1)),2)/2)/(a2*a3))));
+	int t3= int(180+degrees(acos((pow(a2,2)/2 + pow(a3,2)/2 - pow(z,2)/2 - pow((x*cos(q1) - a1 + y*sin(q1)),2)/2)/(a2*a3))))%360;
 	int t2=int(degrees(atan2(z , x*cos(t1) + y*sin(t1) - a1)  -  atan2( a3*sin(t3) , a2+a3*cos(t3))));
-
+	//int t2=0;
+	//q2=atan2(pz , px*cos(q1) + py*sin(q1) - a1)  -  atan2( a2*sin(q3) , a2+a3*cos(q3) ) 
+	Serial.print("t = [");
+		Serial.print(t1);
+		Serial.print(", ");
+		Serial.print(t2);
+		Serial.print(", ");
+		Serial.print(t3);
+		Serial.println("]");
 	int angle[3];
 	angle[q1]=(90-t1)%360;
 	angle[q2]=(90-t2)%360;
-	angle[q3]=(t3-180)%360;
+	angle[q3]=(180+t3)%360;
+	
 
   //function
 	for(int servo_num=0;servo_num<3;servo_num++){
@@ -145,7 +154,7 @@ void Hexapod::dir_kin(int angle[3], uint8_t leg_num){
 	float t1;
 	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
 		t1=radians(float((90-angle[0])%360));
-		d2=-D2;
+		d2=D2;
 	}
 	else{
 		t1=radians(float((angle[0]-90)%360));
