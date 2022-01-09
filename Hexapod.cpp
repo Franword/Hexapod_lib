@@ -127,13 +127,14 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 		angle[q1]=-(360-angle[q1]);
 	}
 	
-	Serial.print("t = [");
+	/*Serial.print("t = [");
 		Serial.print(angle[q1]);
 		Serial.print(", ");
 		Serial.print(angle[q2]);
 		Serial.print(", ");
 		Serial.print(angle[q3]);
-		Serial.println("]");
+		Serial.println("]");*/
+		
 	angle[q1]=90-angle[q1];
 	angle[q2]=90-angle[q2];
 	angle[q3]=angle[q3]-180;
@@ -292,9 +293,7 @@ void Hexapod::change_leg_pair(){
 void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow){
 
 	int probkowanie=int(ilosc_odcinkow+1);
-	Serial.println(angle_rotz);
 	float rotz=radians(angle_rotz);
-	Serial.println(angle_rotz);
 	int r=int(dlugosc_kroku)/2;
 
 	float th[probkowanie];
@@ -396,4 +395,19 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 
 		SetLegPos(pos,leg_num,true);
 	//}	
+};
+void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow){
+trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow);
+for(uint8_t i=0;i<ilosc_odcinkow;i++){
+	for(uint8_t leg_num=0;leg_num<6;leg_num++){
+		if(if_leg_active(leg_num)){
+			SetLegFromTrace(leg_num,i+1);
+		}
+		if(if_leg_active(leg_num)==0 && i>0 && i<ilosc_odcinkow-1){
+			SetLegFromTrace(leg_num,0);
+		}
+	}
+	MoveHexapod();
+}
+
 };

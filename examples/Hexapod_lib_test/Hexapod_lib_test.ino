@@ -127,6 +127,11 @@ void loop() {
       //hexapod.trace(uint8_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow)
       hexapod.SetLegFromTrace(leg_num,trace_point);
     }
+    else if(command.equals("walk")){
+      //hexapod.trace(uint8_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow)
+      hexapod.walk(0,50,3,1);
+
+    }
     else if (command.equals("MoveLegAngle")){
       leg_angles[q1]=0;
       leg_angles[q2]=angle;
