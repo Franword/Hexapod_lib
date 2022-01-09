@@ -118,11 +118,15 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	//q2=atan2(pz , px*cos(q1) + py*sin(q1) - a1)  -  atan2( a2*sin(q3) , a2+a3*cos(q3) )
 	int angle[3];
 	angle[q1]=int(degrees(t1))%360;
-	if(angle[q1]<0){
-		angle[q1]=360+angle[q1];
-	}
 	angle[q2]=int(degrees(t2))%360;
 	angle[q3]=int(degrees(t3))%360;
+		if(angle[q1]<-180){
+		angle[q1]=-(360+angle[q1]);
+	}
+	if(angle[q1]>180){
+		angle[q1]=-(360-angle[q1]);
+	}
+	
 	Serial.print("t = [");
 		Serial.print(angle[q1]);
 		Serial.print(", ");
