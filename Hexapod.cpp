@@ -289,3 +289,111 @@ bool Hexapod::if_leg_active(uint8_t leg_num){
 void Hexapod::change_leg_pair(){
 	_leg_pair=!_leg_pair;
 };
+void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow){
+
+	int probkowanie=int(ilosc_odcinkow+1);
+	Serial.println(angle_rotz);
+	float rotz=radians(angle_rotz);
+	Serial.println(angle_rotz);
+	int r=int(dlugosc_kroku)/2;
+
+	float th[probkowanie];
+	float bow[probkowanie][3];
+	float line[3];
+	//int trace[probkowanie][3];
+
+	for(uint8_t i=0;i<probkowanie;i++){
+		th[i]=PI*(1-i/float(ilosc_odcinkow));
+	
+		bow[i][0]=cos(rotz)*(r * cos(th[i])+r);
+		bow[i][1]=sin(rotz)*(r * cos(th[i])+r);
+		bow[i][2]=r * sin(th[i]);
+	}
+	int ilosc_odcinkow_line=ilosc_odcinkow-2;
+	if(ilosc_odcinkow_line==0){
+		ilosc_odcinkow_line=1;
+	}
+	//line
+	_trace[0][0]=int(cos(rotz)*(-int(dlugosc_kroku)/ilosc_odcinkow_line));
+	_trace[0][1]=int(sin(rotz)*(-int(dlugosc_kroku)/ilosc_odcinkow_line));
+	_trace[0][2]=0;
+
+	//bow
+	for(uint8_t i=1;i<probkowanie;i++){
+		_trace[i][0]=int(bow[i][0]-bow[i-1][0]);
+		_trace[i][1]=int(bow[i][1]-bow[i-1][1]);
+		_trace[i][2]=int(bow[i][2]-bow[i-1][2]);
+	}
+
+	//serial
+	Serial.print("line = [ ");
+	for(uint8_t i=0;i<3;i++){
+		Serial.print(_trace[0][i]);
+		Serial.print(", ");
+	}
+	Serial.println("]");
+	Serial.println("bow =");
+	for(uint8_t j=1;j<probkowanie;j++){
+		Serial.print("[ ");
+		for(uint8_t i=0;i<3;i++){
+			Serial.print(_trace[j][i]);
+			Serial.print(", ");
+		}
+		Serial.println("]");
+	}
+};
+void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
+	int dx, dy;
+	float angle_rotz;
+	float p_c[3];
+	int pos[3];
+	p_c[0]=0;
+	p_c[1]=0;
+	p_c[2]=0;
+	//for(uint8_t leg_num;leg_num<6;leg_num++){
+		switch (leg_num)
+		{
+		case R1:
+			dx=100;
+      	  	dy=-70;
+			break;
+		case R2:
+			dx=0;
+       	 	dy=-100;
+			break;
+		case R3:
+			dx=-100;
+       		 dy=-70;
+			break;
+		case L1:
+			dx=100;
+      	 	 dy=70;
+			break;
+		case L2:
+			dx=0;
+       		 dy=100;
+			break;
+		case L3:
+			dx=-100;
+      	  	dy=70;
+			break;
+		default:
+			Serial.println("wrong leg_num");
+			break;
+		}
+		/*
+		R0c
+		cos(angle_rotz)	sin(angle_rotz) 0
+		-sin(angle_rotz)	cos(angle_rotz) 0
+		0	0	 1
+		*/
+		angle_rotz=atan2(dy,dx);
+		Serial.print("angle rotz = ");
+		Serial.println(degrees(angle_rotz));
+		pos[0]=int(_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz));
+		pos[1]=int(-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz));
+		pos[2]=int(_trace[trace_point][2]);
+
+		SetLegPos(pos,leg_num,true);
+	//}	
+};

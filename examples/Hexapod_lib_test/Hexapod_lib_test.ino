@@ -2,13 +2,13 @@
 
 Gamepad pad;
 
-int angle=0;
-int leg_angles[3]={0,10,-10};
-int hexapod_angles[6][3]={{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle}};
+int16_t angle=0;
+int16_t leg_angles[3]={0,10,-10};
+int16_t hexapod_angles[6][3]={{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle},{0,angle,-angle}};
 
-int hexapod_angles_init[6][3] ={{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90}};
-int hexapod_angles_transport[6][3] ={{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90}};
+//int hexapod_angles_transport[6][3] ={{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90}};
 int8_t x=0, y=0, z=0;
+uint8_t trace_point=0;
 /*
 const uint8_t hexapod_angles_init[6][3] PROGMEM ={{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90},{90,90,90}};
 const uint8_t walk_angles4[6][3] PROGMEM ={{90,50,80},{90,38,73},{90,50,80},{90,38,73},{90,50,80},{90,38,73}};
@@ -48,7 +48,7 @@ int walk_angles4[6][3]={{79,   60 ,  81},{79,   60,   81},{79,   60,   81},{79, 
    EEPROM.update(17,128+8);
  };*/
 String command;
-int leg_num=R1;
+uint8_t leg_num=R1;
 int servo_num=q1;
 bool isrelative=true;
 
@@ -93,16 +93,6 @@ void loop() {
       Serial.print(z);
       Serial.println("]");
     }
-    else if(command.equals("help")){
-      Serial.println("move: init, SetHexapodAngle, SetServoAngle, SetLegAngle");
-      Serial.println("set type of move: relative, absolute");
-      Serial.println("choose leg to move: R1, R2, R3, L1, L2, L3");
-      Serial.println("choose q: q1, q2, q3");
-      Serial.println("print info: info, help, current, calibrated");
-      Serial.println("Save current angles to EEPROM : SaveAngles");
-      Serial.println("change number of moves: -, +");
-      Serial.println("change one move length: angle-, angle+, angle!");
-    }
     else if(command.equals("offset")){
       hexapod.info(false);
     }
@@ -110,45 +100,52 @@ void loop() {
       hexapod.info(true);
     }
      else if(command.equals("init")){
-      //hexapod.SetHexapodAngle(pgm_read_byte_near(hexapod_angles_init),false);
-      hexapod.SetHexapodAngle(hexapod_angles_init,false);
+      for(uint8_t leg_num=0;leg_num<6;leg_num++){
+        for(uint8_t servo_num=0;servo_num<3;servo_num++){
+          hexapod_angles[leg_num][servo_num]=90;;
+        };
+      };
+      hexapod.SetHexapodAngle(hexapod_angles,false);
       hexapod.MoveHexapod();
      }
     else if(command.equals("MoveHexapod")){
-      for(int i=0;i<6;i++){
+      for(uint8_t i=0;i<6;i++){
         hexapod_angles[i][0]=0;
         hexapod_angles[i][1]=angle;
         hexapod_angles[i][2]=angle;
       };
-      for(int i=0;i<number_of_moves;i++){
+      for(uint8_t i=0;i<number_of_moves;i++){
         hexapod.SetHexapodAngle(hexapod_angles,isrelative);
         hexapod.MoveHexapod();
       }
     }
-    else if(command.equals("transport")){
-        //hexapod.SetHexapodAngle(pgm_read_byte_near(hexapod_angles_transport),false);
-        hexapod.SetHexapodAngle(hexapod_angles_transport,false);
-        hexapod.MoveHexapod();
+    else if(command.equals("trace")){
+      //hexapod.trace(uint8_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow)
+      hexapod.trace(0,50,3);
+    }
+    else if(command.equals("SetLegFromTrace")){
+      //hexapod.trace(uint8_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow)
+      hexapod.SetLegFromTrace(leg_num,trace_point);
     }
     else if (command.equals("MoveLegAngle")){
       leg_angles[q1]=0;
       leg_angles[q2]=angle;
       leg_angles[q3]=angle;
-      for(int i=0;i<number_of_moves;i++){
+      for(uint8_t i=0;i<number_of_moves;i++){
         hexapod.SetLegAngle(leg_angles,isrelative,leg_num);
         hexapod.MoveLeg(leg_num);
       }
     }
     
      else if (command.equals("MoveLegPos")){
-      int pos[3]={x,y,z};
-      for(int i=0;i<number_of_moves;i++){
+      int16_t pos[3]={x,y,z};
+      for(uint8_t i=0;i<number_of_moves;i++){
         hexapod.SetLegPos(pos,leg_num,true);
         hexapod.MoveLeg(leg_num);
       }     
     }
     else if (command.equals("MoveServo")){
-       for(int i=0;i<number_of_moves;i++){
+       for(uint8_t i=0;i<number_of_moves;i++){
           hexapod.SetServoAngle(angle,isrelative,leg_num,servo_num);
           hexapod.MoveServo(leg_num,servo_num);
        }
@@ -159,82 +156,6 @@ void loop() {
     }
     else if (command.equals("ReadOffset")){
           hexapod.ReadOffset();  
-    }
-    else if (command.equals("Walk1")){
-          //hexapod.SetHexapodAngle(pgm_read_byte_near(walk_angles1),false);
-          //hexapod.SetHexapodAngle(walk_angles1,false);
-    }
-    else if (command.equals("Walk2")){
-          //hexapod.SetHexapodAngle(pgm_read_byte_near(walk_angles2),false);
-          //hexapod.SetHexapodAngle(walk_angles2,false);
-    }
-    else if (command.equals("Walk3")){
-          //hexapod.SetHexapodAngle(pgm_read_byte_near(walk_angles3),false);
-         // hexapod.SetHexapodAngle(walk_angles3,false);
-    }
-    else if (command.equals("Walk4")){
-          //hexapod.SetHexapodAngle(walk_angles4,false);
-          //hexapod.SetHexapodAngle(pgm_read_byte_near(walk_angles4),false);
-    }
-    else if(command.equals("Walk")){
-      hexapod.SetHexapodAngle(pgm_read_byte_near(hexapod_angles_init),false);
-      //walk init 1
-      for(int i=0;i<6;i++){
-        hexapod_angles[i][0]=angle/2;
-        hexapod_angles[i][1]=0;
-        hexapod_angles[i][2]=0;
-      };
-      for(int i=0;i<number_of_moves;i++){
-        hexapod.SetHexapodAngle(hexapod_angles,true);
-      }
-      //delay(1000);
-      //walk init 2
-      hexapod.change_leg_pair();
-      for(int i=0;i<6;i++){
-        hexapod_angles[i][0]=-angle/2;
-        hexapod_angles[i][1]=0;
-        hexapod_angles[i][2]=0;
-      };
-      for(int i=0;i<number_of_moves;i++){
-        hexapod.SetHexapodAngle(hexapod_angles,true);
-      }
-      delay(1000);
-      for(uint8_t n=0;n<number_of_steps;n++){
-      //step forward 1
-      for(int i=0;i<6;i++){
-        hexapod_angles[i][0]=angle/2;
-        hexapod_angles[i][1]=angle/2;
-        hexapod_angles[i][2]=angle/2;
-      };
-      for(int i=0;i<number_of_moves;i++){
-        hexapod.SetHexapodAngle(hexapod_angles,true);
-      }
-      delay(1000);
-      //step backward
-      hexapod.change_leg_pair();
-      for(int i=0;i<6;i++){
-        hexapod_angles[i][0]=-angle;
-        hexapod_angles[i][1]=0;
-        hexapod_angles[i][2]=0;
-      };
-      for(int i=0;i<number_of_moves;i++){
-        hexapod.SetHexapodAngle(hexapod_angles,true);
-      }
-      delay(1000);
-      //step forward 2
-      hexapod.change_leg_pair();
-      for(int i=0;i<6;i++){
-        hexapod_angles[i][0]=angle/2;
-        hexapod_angles[i][1]=-angle/2;
-        hexapod_angles[i][2]=-angle/2;
-      };
-      for(int i=0;i<number_of_moves;i++){
-        hexapod.SetHexapodAngle(hexapod_angles,true);
-      }
-      delay(1000);
-      hexapod.change_leg_pair();
-      }
-      hexapod.SetHexapodAngle(pgm_read_byte_near(hexapod_angles_init),false);
     }
     else if (command.equals("par")){
        hexapod.change_leg_pair();
@@ -302,6 +223,16 @@ void loop() {
       angle+=10;
       Serial.print("angle = ");
       Serial.println(angle);
+    }
+    else if (command.equals("trace+")){
+      trace_point+=1;
+      Serial.print("trace = ");
+      Serial.println(trace_point);
+    }
+    else if (command.equals("trace-")){
+      trace_point-=1;
+      Serial.print("trace = ");
+      Serial.println(trace_point);
     }
     else if (command.equals("angle!")){
       angle=-angle;
