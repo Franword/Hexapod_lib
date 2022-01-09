@@ -397,6 +397,7 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 	//}	
 };
 void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow){
+	//przygotowanie do chodu
 trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow);
 for(uint8_t i=0;i<ilosc_odcinkow;i++){
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
@@ -409,5 +410,38 @@ for(uint8_t i=0;i<ilosc_odcinkow;i++){
 	}
 	MoveHexapod();
 }
+change_leg_pair();
+
+//wlasciwy chod
+trace(angle_rotz,dlugosc_kroku,ilosc_odcinkow);
+for(uint8_t num_of_steps=0;num_of_steps<liczba_krokow;num_of_steps++){
+	for(uint8_t i=0;i<ilosc_odcinkow;i++){
+		for(uint8_t leg_num=0;leg_num<6;leg_num++){
+			if(if_leg_active(leg_num)){
+				SetLegFromTrace(leg_num,i+1);
+			}
+			if(if_leg_active(leg_num)==0 && i>0 && i<ilosc_odcinkow-1){
+				SetLegFromTrace(leg_num,0);
+			}
+		}
+	MoveHexapod();
+	change_leg_pair();
+	}
+}
+
+//zakonczenie chodu
+trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow);
+for(uint8_t i=0;i<ilosc_odcinkow;i++){
+	for(uint8_t leg_num=0;leg_num<6;leg_num++){
+		if(if_leg_active(leg_num)){
+			SetLegFromTrace(leg_num,i+1);
+		}
+		if(if_leg_active(leg_num)==0 && i>0 && i<ilosc_odcinkow-1){
+			SetLegFromTrace(leg_num,0);
+		}
+	}
+	MoveHexapod();
+}
+change_leg_pair();
 
 };
