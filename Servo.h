@@ -8,15 +8,16 @@ class Servo
   public:
   Servo();
   void Setup(uint8_t,uint8_t);
-  uint16_t SetServoAngle(uint8_t,bool);
+  uint16_t SetServoAngle(float,bool);
   void info(bool);
   void SetOffset();
   void  ReadOffset();
   bool get_pwm_num();
   uint8_t get_pwm_address();
-  uint8_t get_angle();
+  float get_angle();
   private:
-  uint8_t _angle;
+  int map_float(float, int, int, int, int);
+  float _angle;
   int8_t _offset;
   uint8_t _address;
   bool _pwm_num;

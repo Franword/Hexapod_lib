@@ -75,7 +75,7 @@ void Servo::Setup(uint8_t leg_num,uint8_t servo_num)
 	ReadOffset();
 	//SetServoAngle(90,false);
 };
-uint16_t Servo::SetServoAngle(uint8_t angle,bool relative)
+uint16_t Servo::SetServoAngle(float angle,bool relative)
 {
 	//Serial.println("\nServo::SetServoAngle");
 	if(relative){
@@ -88,10 +88,10 @@ uint16_t Servo::SetServoAngle(uint8_t angle,bool relative)
 	}
 	else{
 		if(_inverse){
-			angle=180-angle-_offset;
+			angle=180.0-angle-float(_offset);
 		}
 		else{
-			angle=angle+_offset;
+			angle=angle+float(_offset);
 		}
 	}
 	if(angle<0){
@@ -109,7 +109,7 @@ uint16_t Servo::SetServoAngle(uint8_t angle,bool relative)
 		angle=90;
 	}
 	_angle=angle;
-	return map(angle, 0, 180, SERVOMIN,SERVOMAX);
+	return map_float(angle, 0, 180, SERVOMIN,SERVOMAX);
 	//Serial.println(_pulse);
 };
 void Servo::info(bool if_current){
@@ -127,10 +127,10 @@ void Servo::info(bool if_current){
 };
 void Servo::SetOffset(){
 	if(_inverse){ //inversing againg to set values using inversing xD
-		EEPROM.update(_id,128+(180-_angle)-90);
+		EEPROM.update(_id,128+(180-int(_angle))-90);
 	}
 	else{
-		EEPROM.update(_id,128+_angle-90);
+		EEPROM.update(_id,128+int(_angle)-90);
 	}
 };
 void Servo::ReadOffset(){
@@ -143,11 +143,14 @@ bool Servo::get_pwm_num(){
 uint8_t  Servo::get_pwm_address(){
 	return _address;
 };
-uint8_t Servo::get_angle(){
+float Servo::get_angle(){
 	if(_inverse){
-			return 180-(_angle+_offset);
+			return 180.0-(_angle+float(_offset));
 		}
 		else{
-			return _angle-_offset;
+			return _angle-float(_offset);
 		}
+};
+int Servo::map_float(float x, int in_min, int in_max, int out_min, int out_max){
+	return int((x - float(in_min)) * (float(out_max - out_min)) / (float(in_max - in_min)) + float(out_min));
 };

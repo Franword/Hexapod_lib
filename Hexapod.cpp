@@ -34,11 +34,11 @@ void Hexapod::Setup(){
 	Serial.println("Hexapod created\n");
 };
 //*********************************************************************************************************************************************
-void Hexapod::SetServoAngle(int angle,bool relative,uint8_t leg_num,uint8_t servo_num){
+void Hexapod::SetServoAngle(float angle,bool relative,uint8_t leg_num,uint8_t servo_num){
 	//function
 	_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].SetServoAngle(angle,relative);
 	//update pos
-	int angles_to_update_pos[3];
+	float angles_to_update_pos[3];
 	angles_to_update_pos[0]=_servo[leg_num][q1].get_angle();
 	angles_to_update_pos[1]=_servo[leg_num][q2].get_angle();
 	angles_to_update_pos[2]= _servo[leg_num][q3].get_angle();
@@ -61,13 +61,13 @@ void Hexapod::MoveServo(uint8_t leg_num,uint8_t servo_num){
 	//}
 };
 //*********************************************************************************************************************************************
-void Hexapod::SetLegAngle(int angle[3],bool relative,uint8_t leg_num){
+void Hexapod::SetLegAngle(float angle[3],bool relative,uint8_t leg_num){
 	//function
-	for(int servo_num=0;servo_num<3;servo_num++){
+	for(uint8_t servo_num=0;servo_num<3;servo_num++){
 		_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].SetServoAngle(angle[servo_num],relative);
 	}
 	//update pos
-	int angles_to_update_pos[3];
+	float angles_to_update_pos[3];
 	angles_to_update_pos[0]=_servo[leg_num][q1].get_angle();
 	angles_to_update_pos[1]=_servo[leg_num][q2].get_angle();
 	angles_to_update_pos[2]= _servo[leg_num][q3].get_angle();
@@ -92,7 +92,7 @@ void Hexapod::SetLegAngle(int angle[3],bool relative,uint8_t leg_num){
 		}
 		Serial.println("]");
 };
-void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
+void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 	float d2;
 	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
 		
@@ -101,7 +101,7 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	else{
 		d2=D2;
 	}
-	int x, y, z;
+	float x, y, z;
 	if(relative){
 		x=pos[0]+_pos[leg_num][0];
 		y=pos[1]+_pos[leg_num][1];
@@ -116,15 +116,15 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 	float t2 = atan2(z , x*cos(t1) + y*sin(t1) - a1)  -  atan2( a3*sin(t3) , a2+a3*cos(t3));
 	//int t2=0;
 	//q2=atan2(pz , px*cos(q1) + py*sin(q1) - a1)  -  atan2( a2*sin(q3) , a2+a3*cos(q3) )
-	int angle[3];
-	angle[q1]=int(degrees(t1))%360;
-	angle[q2]=int(degrees(t2))%360;
-	angle[q3]=int(degrees(t3))%360;
-		if(angle[q1]<-180){
-		angle[q1]=-(360+angle[q1]);
+	float angle[3];
+	angle[q1]=fmod(degrees(t1),360);
+	angle[q2]=fmod(degrees(t2),360);
+	angle[q3]=fmod(degrees(t3),360);
+		if(angle[q1]<-180.0){
+		angle[q1]=-(360.0+angle[q1]);
 	}
-	if(angle[q1]>180){
-		angle[q1]=-(360-angle[q1]);
+	if(angle[q1]>180.0){
+		angle[q1]=-(360.0-angle[q1]);
 	}
 	
 	/*Serial.print("t = [");
@@ -135,13 +135,13 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 		Serial.print(angle[q3]);
 		Serial.println("]");*/
 		
-	angle[q1]=90-angle[q1];
-	angle[q2]=90-angle[q2];
-	angle[q3]=angle[q3]-180;
+	angle[q1]=90.0-angle[q1];
+	angle[q2]=90.0-angle[q2];
+	angle[q3]=angle[q3]-180.0;
 	
 
   //function
-	for(int servo_num=0;servo_num<3;servo_num++){
+	for(uint8_t servo_num=0;servo_num<3;servo_num++){
 		_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].SetServoAngle(angle[servo_num],false);
 	}
 	//serial
@@ -154,30 +154,30 @@ void Hexapod::SetLegPos(int pos[3],uint8_t leg_num, bool relative){
 			Serial.print(angle[q3]);
 		
 		Serial.print("]	pos = [");
-		for(int i=0;i<3;i++){
+		for(uint8_t i=0;i<3;i++){
 			Serial.print(_pos[leg_num][i]);
 			Serial.print(" ");
 		}
 		Serial.println("]");
 };
-void Hexapod::dir_kin(int angle[3], uint8_t leg_num){
+void Hexapod::dir_kin(float angle[3], uint8_t leg_num){
 	float d2;
 	float t1;
 	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
-		t1=radians(float((90-angle[0])%360));
+		t1=radians(fmod(90.0-angle[0],360));
 		d2=-D2;
 	}
 	else{
-		t1=radians(float((angle[0]-90)%360));
+		t1=radians(fmod(angle[0]-90.0,360));
 		d2=D2;
 	}
 	//float t1=radians(float((90-angle[0])%360));
-	float t2=radians(float((90-angle[1])%360));
-	float t3=radians(float((180+angle[2])%360));
+	float t2=radians(fmod(90.0-angle[1],360));
+	float t3=radians(fmod(180.0+angle[2],360));
 
-	_pos[leg_num][0] =int(a1*cos(t1) - a3*(cos(t1)*sin(t2)*sin(t3) - cos(t1)*cos(t2)*cos(t3)) + d2*sin(t1) + a2*cos(t1)*cos(t2));
-	_pos[leg_num][1] =int(a1*sin(t1) - d2*cos(t1) - a3*(sin(t1)*sin(t2)*sin(t3) - cos(t2)*cos(t3)*sin(t1)) + a2*cos(t2)*sin(t1));
-	_pos[leg_num][2] =int(a3*sin(t2 + t3) + a2*sin(t2));
+	_pos[leg_num][0] =a1*cos(t1) - a3*(cos(t1)*sin(t2)*sin(t3) - cos(t1)*cos(t2)*cos(t3)) + d2*sin(t1) + a2*cos(t1)*cos(t2);
+	_pos[leg_num][1] =a1*sin(t1) - d2*cos(t1) - a3*(sin(t1)*sin(t2)*sin(t3) - cos(t2)*cos(t3)*sin(t1)) + a2*cos(t2)*sin(t1);
+	_pos[leg_num][2] =a3*sin(t2 + t3) + a2*sin(t2);
 };
 void Hexapod::MoveLeg(uint8_t leg_num){
 	for(int servo_num=0;servo_num<3;servo_num++){
@@ -185,12 +185,12 @@ void Hexapod::MoveLeg(uint8_t leg_num){
 	}
 };
 //*********************************************************************************************************************************************
-void Hexapod::SetHexapodAngle(int angle[6][3],bool relative){
-	int angles_to_update_pos[3];
+void Hexapod::SetHexapodAngle(float angle[6][3],bool relative){
+	float angles_to_update_pos[3];
 	//function
 	 for(byte leg_num=0; leg_num <=5;leg_num++){
 		 //if(if_leg_active(leg_num)){
-		for(int servo_num=0;servo_num<3;servo_num++){
+		for(uint8_t servo_num=0;servo_num<3;servo_num++){
 			_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].SetServoAngle(angle[leg_num][servo_num],relative);
 			//update pos
 			angles_to_update_pos[0]=_servo[leg_num][q1].get_angle();
@@ -294,7 +294,7 @@ void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odci
 
 	int probkowanie=int(ilosc_odcinkow+1);
 	float rotz=radians(angle_rotz);
-	int r=int(dlugosc_kroku)/2;
+	float r=float(dlugosc_kroku)/2.0;
 
 	float th[probkowanie];
 	float bow[probkowanie][3];
@@ -302,7 +302,7 @@ void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odci
 	//int trace[probkowanie][3];
 
 	for(uint8_t i=0;i<probkowanie;i++){
-		th[i]=PI*(1-i/float(ilosc_odcinkow));
+		th[i]=PI*(1.0-i/float(ilosc_odcinkow));
 	
 		bow[i][0]=cos(rotz)*(r * cos(th[i])+r);
 		bow[i][1]=sin(rotz)*(r * cos(th[i])+r);
@@ -313,15 +313,15 @@ void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odci
 		ilosc_odcinkow_line=1;
 	}
 	//line
-	_trace[0][0]=int(cos(rotz)*(-int(dlugosc_kroku)/ilosc_odcinkow_line));
-	_trace[0][1]=int(sin(rotz)*(-int(dlugosc_kroku)/ilosc_odcinkow_line));
+	_trace[0][0]=cos(rotz)*(-float(dlugosc_kroku)/ilosc_odcinkow_line);
+	_trace[0][1]=sin(rotz)*(-float(dlugosc_kroku)/ilosc_odcinkow_line);
 	_trace[0][2]=0;
 
 	//bow
 	for(uint8_t i=1;i<probkowanie;i++){
-		_trace[i][0]=int(bow[i][0]-bow[i-1][0]);
-		_trace[i][1]=int(bow[i][1]-bow[i-1][1]);
-		_trace[i][2]=int(bow[i][2]-bow[i-1][2]);
+		_trace[i][0]=bow[i][0]-bow[i-1][0];
+		_trace[i][1]=bow[i][1]-bow[i-1][1];
+		_trace[i][2]=bow[i][2]-bow[i-1][2];
 	}
 
 	//serial
@@ -345,7 +345,7 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 	int dx, dy;
 	float angle_rotz;
 	float p_c[3];
-	int pos[3];
+	float pos[3];
 	p_c[0]=0;
 	p_c[1]=0;
 	p_c[2]=0;
@@ -389,9 +389,9 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 		angle_rotz=atan2(dy,dx);
 		Serial.print("angle rotz = ");
 		Serial.println(degrees(angle_rotz));
-		pos[0]=int(_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz));
-		pos[1]=int(-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz));
-		pos[2]=int(_trace[trace_point][2]);
+		pos[0]=_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz);
+		pos[1]=-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz);
+		pos[2]=_trace[trace_point][2];
 
 		SetLegPos(pos,leg_num,true);
 	//}	

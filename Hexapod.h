@@ -11,9 +11,9 @@ class Hexapod
   public:
   Hexapod();
   void Setup();
-  void SetLegAngle(int[3],bool,uint8_t);
-  void SetServoAngle(int,bool,uint8_t,uint8_t);
-  void SetHexapodAngle(int[6][3],bool);
+  void SetLegAngle(float[3],bool,uint8_t);
+  void SetServoAngle(float,bool,uint8_t,uint8_t);
+  void SetHexapodAngle(float[6][3],bool);
   void MoveServo(uint8_t,uint8_t);
   void MoveLeg(uint8_t);
   void info(bool);
@@ -21,8 +21,8 @@ class Hexapod
   void SetOffset();
   bool if_leg_active(uint8_t);
   void change_leg_pair();
-  void SetLegPos(int[3],uint8_t,bool);
-  void dir_kin(int[3], uint8_t);
+  void SetLegPos(float[3],uint8_t,bool);
+  void dir_kin(float[3], uint8_t);
   void MoveHexapod();
   void SetLegFromTrace(uint8_t, uint8_t);
   void trace(int16_t,uint16_t,uint8_t);
@@ -30,8 +30,8 @@ class Hexapod
   private:
   Adafruit_PWMServoDriver _pwm[2];
   Servo _servo[6][3];
-  int _pos[6][3];
-  int _trace[10][3];
+  float _pos[6][3];
+  float _trace[10][3];
   bool _leg_pair;
   uint16_t _pulse[6][3];
 };
