@@ -26,7 +26,7 @@ class Hexapod
   void MoveHexapod();
   void SetLegFromTrace(uint8_t, uint8_t);
   void trace(int16_t,uint16_t,uint8_t);
-  void walk(int16_t,uint16_t,uint8_t,uint8_t);
+  void walk(int16_t,uint16_t,uint8_t,uint8_t, int);
   private:
   Adafruit_PWMServoDriver _pwm[2];
   Servo _servo[6][3];
@@ -34,6 +34,7 @@ class Hexapod
   float _trace[10][3];
   bool _leg_pair;
   uint16_t _pulse[6][3];
+  float _angle_rotz[6];
 };
 #endif
 
