@@ -44,19 +44,24 @@ void Hexapod::SetServoAngle(float angle,bool relative,uint8_t leg_num,uint8_t se
 	angles_to_update_pos[2]= _servo[leg_num][q3].get_angle();
 	dir_kin(angles_to_update_pos, leg_num);
 	//serial
+	/*
 		print_leg_num(leg_num);
 		print_servo_num(servo_num);
 		if(relative){
-			Serial.print(" moved by [");
+			Serial.print(" changed by [");
 		}
 		else{
-			Serial.print(" moved to [");
+			Serial.print(" set to [");
 		}
 		Serial.print(angle);
 		Serial.println("]");
+		*/
 };
 void Hexapod::MoveServo(uint8_t leg_num,uint8_t servo_num){
-	//if(leg_num==R1){	
+	//if(leg_num==R1){
+	///print_leg_num(leg_num);
+	///print_servo_num(servo_num);
+	///Serial.println(" moved");
 	_pwm[_servo[leg_num][servo_num].get_pwm_num()].setPWM(_servo[leg_num][servo_num].get_pwm_address(),0, _pulse[leg_num][servo_num]);
 	//}
 };
@@ -75,10 +80,10 @@ void Hexapod::SetLegAngle(float angle[3],bool relative,uint8_t leg_num){
 	//serial
 		print_leg_num(leg_num);
 		if(relative){
-			Serial.print(" moved by [");
+			Serial.print(" changed by [");
 		}
 		else{
-			Serial.print(" moved to [");
+			Serial.print(" set to [");
 		}
 		Serial.print(angle[q1]);
 		Serial.print(", ");
@@ -145,8 +150,9 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 		_pulse[leg_num][servo_num]=_servo[leg_num][servo_num].SetServoAngle(angle[servo_num],false);
 	}
 	//serial
+	/*
 		print_leg_num(leg_num);
-			Serial.print(" moved to [");
+			Serial.print(" set to [");
 			Serial.print(angle[q1]);
 			Serial.print(", ");
 			Serial.print(angle[q2]);
@@ -159,6 +165,7 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 			Serial.print(" ");
 		}
 		Serial.println("]");
+		*/
 };
 void Hexapod::dir_kin(float angle[3], uint8_t leg_num){
 	float d2;
@@ -199,12 +206,13 @@ void Hexapod::SetHexapodAngle(float angle[6][3],bool relative){
 			dir_kin(angles_to_update_pos, leg_num);
 		}
 		//serial
+		/*
 		print_leg_num(leg_num);
 		if(relative){
-			Serial.print(" moved by [");
+			Serial.print(" changed by [");
 		}
 		else{
-			Serial.print(" moved to [");
+			Serial.print(" set to [");
 		}
 		Serial.print(angle[leg_num][q1]);
 		Serial.print(", ");
@@ -218,6 +226,7 @@ void Hexapod::SetHexapodAngle(float angle[6][3],bool relative){
 		}
 		Serial.println("]");
 		//}
+		*/
 	};
 	for(int leg_num=0; leg_num <=5;leg_num++){
 		for(int servo_num=0;servo_num<3;servo_num++)
@@ -232,6 +241,7 @@ for(uint8_t leg_num=0;leg_num<6;leg_num++){
 		MoveServo(leg_num,servo_num);
 	}
 }
+info(true);
 };
 void Hexapod::info(bool if_current){
 	for(int leg_num=0; leg_num <=5;leg_num++){
@@ -248,6 +258,7 @@ void Hexapod::info(bool if_current){
 		}
 		Serial.println("]");
 	}
+	Serial.println("");
 };
 void Hexapod::SetOffset(){
 	for(int leg_num=0; leg_num <=5;leg_num++){
@@ -387,7 +398,8 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 		0	0	 1
 		*/
 		angle_rotz=atan2(dy,dx);
-		Serial.print("angle rotz = ");
+		print_leg_num(leg_num);
+		Serial.print(", angle rotz = ");
 		Serial.println(degrees(angle_rotz));
 		pos[0]=_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz);
 		pos[1]=-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz);
@@ -400,11 +412,15 @@ void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcin
 	//przygotowanie do chodu
 trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow);
 for(uint8_t i=0;i<ilosc_odcinkow;i++){
+	Serial.print("n ");
+	Serial.println(i+1);
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
 		if(if_leg_active(leg_num)){
+			Serial.print("bow ");
 			SetLegFromTrace(leg_num,i+1);
 		}
 		if(if_leg_active(leg_num)==0 && i>0 && i<ilosc_odcinkow-1){
+			Serial.print("line ");
 			SetLegFromTrace(leg_num,0);
 		}
 	}
@@ -415,28 +431,38 @@ change_leg_pair();
 //wlasciwy chod
 trace(angle_rotz,dlugosc_kroku,ilosc_odcinkow);
 for(uint8_t num_of_steps=0;num_of_steps<liczba_krokow;num_of_steps++){
+	Serial.print("step ");
+	Serial.println(num_of_steps+1);
 	for(uint8_t i=0;i<ilosc_odcinkow;i++){
+		Serial.print("n ");
+		Serial.println(i+1);
 		for(uint8_t leg_num=0;leg_num<6;leg_num++){
 			if(if_leg_active(leg_num)){
+				Serial.print("bow ");
 				SetLegFromTrace(leg_num,i+1);
 			}
 			if(if_leg_active(leg_num)==0 && i>0 && i<ilosc_odcinkow-1){
+				Serial.print("line ");
 				SetLegFromTrace(leg_num,0);
 			}
 		}
 	MoveHexapod();
-	change_leg_pair();
 	}
+	change_leg_pair();
 }
 
 //zakonczenie chodu
 trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow);
 for(uint8_t i=0;i<ilosc_odcinkow;i++){
+	Serial.print("n ");
+	Serial.println(i+1);
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
 		if(if_leg_active(leg_num)){
+			Serial.print("bow ");
 			SetLegFromTrace(leg_num,i+1);
 		}
 		if(if_leg_active(leg_num)==0 && i>0 && i<ilosc_odcinkow-1){
+			Serial.print("line ");
 			SetLegFromTrace(leg_num,0);
 		}
 	}
