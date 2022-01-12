@@ -36,32 +36,42 @@ void Hexapod::Setup(){
 		case R1:
 			dx=100;
       	  	dy=-70;
+			//_angle_rotz[leg_num]=atan2(dy,dx);
 			break;
 		case R2:
 			dx=0;
        	 	dy=-100;
+			//_angle_rotz[leg_num]=atan2(dy,dx);
 			break;
 		case R3:
 			dx=-100;
        		 dy=-70;
+			//_angle_rotz[leg_num]=atan2(dy,dx);
 			break;
 		case L1:
 			dx=100;
       	 	 dy=70;
+				//to dziala lepiej
+			//_angle_rotz[leg_num]=-(PI/2-atan2(dy,dx));
 			break;
 		case L2:
 			dx=0;
        		 dy=100;
+			//_angle_rotz[leg_num]=atan2(dy,dx);
 			break;
 		case L3:
 			dx=-100;
       	  	dy=70;
+			//_angle_rotz[leg_num]=-atan2(dy,dx);
 			break;
 		default:
 			Serial.println("wrong leg_num");
 			break;
 		}
-		_angle_rotz[leg_num]=atan2(dy,dx);
+		_angle_rotz[leg_num]=0;
+		//wlasciwa funkcja
+		//_angle_rotz[leg_num]=atan2(dy,dx);
+
 	}
 	Serial.println("Hexapod created\n");
 };
@@ -149,7 +159,7 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 	_pos[leg_num][2]=z;
 	float t1=2*atan2((x - sqrt(- pow(d2,2) + pow(x,2) + pow(y,2))),d2 - y);
 	//int t3=int(degrees(acos(((pow(x*cos(t1) + y*sin(t1)-a1),2) + pow(z,2)  - pow(a2,2) - pow(a3,2))/(2*a2*a3)))); //to naprawic
-	float t3= PI +acos((pow(a2,2)/2 + pow(a3,2)/2 - pow(z,2)/2 - pow((x*cos(q1) - a1 + y*sin(q1)),2)/2)/(a2*a3));
+	float t3= PI +acos((pow(a2,2)/2 + pow(a3,2)/2 - pow(z,2)/2 - pow((x*cos(t1) - a1 + y*sin(t1)),2)/2)/(a2*a3));
 	float t2 = atan2(z , x*cos(t1) + y*sin(t1) - a1)  -  atan2( a3*sin(t3) , a2+a3*cos(t3));
 	//int t2=0;
 	//q2=atan2(pz , px*cos(q1) + py*sin(q1) - a1)  -  atan2( a2*sin(q3) , a2+a3*cos(q3) )
@@ -157,8 +167,9 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 	angle[q1]=fmod(degrees(t1),360);
 	angle[q2]=fmod(degrees(t2),360);
 	angle[q3]=fmod(degrees(t3),360);
-		if(angle[q1]<-180.0){
-		angle[q1]=-(360.0+angle[q1]);
+
+	if(angle[q1]<-180.0){
+		angle[q1]=(360.0+angle[q1]);
 	}
 	if(angle[q1]>180.0){
 		angle[q1]=-(360.0-angle[q1]);
@@ -270,10 +281,12 @@ void Hexapod::SetHexapodAngle(float angle[6][3],bool relative){
 void Hexapod::MoveHexapod(){
 for(uint8_t leg_num=0;leg_num<6;leg_num++){
 	for(uint8_t servo_num=0;servo_num<3;servo_num++){
+		//if(leg_num==L1){
 		MoveServo(leg_num,servo_num);
+		//}
 	}
 }
-//info(true);
+info(true);
 };
 void Hexapod::info(bool if_current){
 	for(int leg_num=0; leg_num <=5;leg_num++){
