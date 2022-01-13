@@ -404,21 +404,38 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 	p_c[0]=0;
 	p_c[1]=0;
 	p_c[2]=0;
-		angle_rotz=_angle_rotz[leg_num];
-		print_leg_num(leg_num);
-		Serial.print(", angle rotz = ");
-		Serial.println(degrees(angle_rotz));
-		pos[0]=_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz);
-		pos[1]=-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz);
-		pos[2]=_trace[trace_point][2];
+	angle_rotz=_angle_rotz[leg_num];
+	Serial.println(degrees(angle_rotz));
+	//rotz
+	pos[0]=_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz);
+	pos[1]=-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz);
+	pos[2]=_trace[trace_point][2];
+	SetLegPos(pos,leg_num,true);
 
-		SetLegPos(pos,leg_num,true);
-	//}	
+	//serial
+	print_leg_num(leg_num);
+	Serial.print(" pos set to [");
+	Serial.print(_trace[trace_point][0]);
+	Serial.print("; ");
+	Serial.print(_trace[trace_point][1]);
+	Serial.print("; ");
+	Serial.print(_trace[trace_point][2]);
+	Serial.print("]*Rz(");
+	Serial.print(degrees(angle_rotz));
+	Serial.print(") = [");
+	Serial.print(pos[0]);
+	Serial.print(", ");
+	Serial.print(pos[1]);
+	Serial.print(", ");
+	Serial.print(pos[2]);
+	Serial.println("]");
+		
 };
 void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow, int delay_micros){
 	unsigned long time_start;
 	unsigned long time_koniec;
 	unsigned long czas_wykon;
+	int delay_var;
 	String bow_s="bow ";
 	String line_s="line ";
 	String czas_s="czas ";
@@ -443,7 +460,12 @@ for(uint8_t i=0;i<ilosc_odcinkow;i++){
 	czas_wykon=(time_koniec-time_start)/1000;
   	Serial.print(czas_s);
   	Serial.println(czas_wykon);
-	delay(delay_micros-czas_wykon);
+	delay_var = delay_micros-czas_wykon;
+	//if delay_micros < czas_wykon
+	if(delay_var<0){
+		delay_var=0;
+	}
+	delay(delay_var);
 	MoveHexapod();
 }
 change_leg_pair();
