@@ -366,7 +366,7 @@ bool Hexapod::if_leg_active(uint8_t leg_num){
 void Hexapod::change_leg_pair(){
 	_leg_pair=!_leg_pair;
 };
-void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow,int percent_of_moves_without_line){
+void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow,int moves_without_line){
 
 	int probkowanie=int(ilosc_odcinkow+1);
 	float rotz=radians(angle_rotz);
@@ -384,7 +384,7 @@ void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odci
 		bow[i][1]=sin(rotz)*(r * cos(th[i])+r);
 		bow[i][2]=r * sin(th[i]);
 	}
-	_ilosc_without_line=ilosc_odcinkow*float(percent_of_moves_without_line)/200;
+	_ilosc_without_line=moves_without_line;
 	int ilosc_odcinkow_line=ilosc_odcinkow-2*_ilosc_without_line;
 	Serial.print("ilosc line ");
 	Serial.println(ilosc_odcinkow_line);
@@ -457,17 +457,17 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 	Serial.println("]");
 	*/
 };
-void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow, int delay_micros,int percent_of_moves_without_line){
+void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow, int delay_micros,int moves_without_line){
 //przygotownie do chodu
-trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow,percent_of_moves_without_line);
+trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow,moves_without_line);
 step(ilosc_odcinkow, delay_micros);
 //wlasciwy chod
-trace(angle_rotz,dlugosc_kroku,ilosc_odcinkow,percent_of_moves_without_line);
+trace(angle_rotz,dlugosc_kroku,ilosc_odcinkow,moves_without_line);
 for(uint8_t num_of_steps=0;num_of_steps<liczba_krokow;num_of_steps++){
 	step(ilosc_odcinkow, delay_micros);
 }
 //zakonczenie chodu
-trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow,percent_of_moves_without_line);
+trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow,moves_without_line);
 step(ilosc_odcinkow, delay_micros);
 };
 
@@ -486,7 +486,7 @@ void Hexapod::step(uint8_t ilosc_odcinkow, int delay_micros){
 		if(if_leg_active(leg_num)){
 			SetLegFromTrace(leg_num,i+1);
 		}
-		if(if_leg_active(leg_num)==0 && i>=ilosc_odcinkow_without_line && i<=	ilosc_odcinkow-ilosc_odcinkow_without_line){
+		if(if_leg_active(leg_num)==0 && i>=ilosc_odcinkow_without_line && i<ilosc_odcinkow-ilosc_odcinkow_without_line){
 			SetLegFromTrace(leg_num,0);
 			Serial.println("o");
 		}
