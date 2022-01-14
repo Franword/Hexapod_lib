@@ -28,6 +28,7 @@ class Hexapod
   void trace(int16_t,uint16_t,uint8_t,int);
   void walk(int16_t,uint16_t,uint8_t,uint8_t, int,int);
   void step(uint8_t, int);
+  void SetInit();
   private:
   Adafruit_PWMServoDriver _pwm[2];
   Servo _servo[6][3];
@@ -37,6 +38,7 @@ class Hexapod
   uint16_t _pulse[6][3];
   float _angle_rotz[6];
   int _ilosc_without_line;
+  float _init_pos[3];
 };
 #endif
 

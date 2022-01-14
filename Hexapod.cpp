@@ -28,9 +28,6 @@ void Hexapod::Setup(){
 	int dx, dy;
 	//serial
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
-		for(uint8_t servo_num=0;servo_num<3;servo_num++){
-			SetServoAngle(90,false,leg_num,servo_num);
-		}
 		switch (leg_num)
 		{
 		case R1:
@@ -71,7 +68,10 @@ void Hexapod::Setup(){
 		_angle_rotz[leg_num]=0;
 		//wlasciwa funkcja
 		_angle_rotz[leg_num]=atan2(dy,dx);
-
+		_init_pos[0]=100.0;
+		_init_pos[1]=0.0;
+		_init_pos[2]=-100.0;
+		SetInit();
 	}
 	Serial.println("Hexapod created\n");
 };
@@ -154,6 +154,16 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 		}
 		z=pos[2]+_pos[leg_num][2];
 	}
+	else{
+		x=pos[0];
+		if(leg_num==R1 || leg_num==R2 || leg_num==R3){
+			y=pos[1];
+		}
+		else{
+			y=-pos[1];
+		}
+		z=pos[2];
+	}
 
 	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
 		d2=-D2;
@@ -165,7 +175,6 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 	}
 	
 	_pos[leg_num][0]=x;
-	
 	_pos[leg_num][2]=z;
 
 	float t1=2*atan2((x - sqrt(- pow(d2,2) + pow(x,2) + pow(y,2))),d2 - y);
@@ -477,15 +486,22 @@ void Hexapod::step(uint8_t ilosc_odcinkow, int delay_micros){
 		if(if_leg_active(leg_num)){
 			SetLegFromTrace(leg_num,i+1);
 		}
-		if(if_leg_active(leg_num)==0 && i>ilosc_odcinkow_without_line && i<ilosc_odcinkow-ilosc_odcinkow_without_line){
+		if(if_leg_active(leg_num)==0 && i>=ilosc_odcinkow_without_line && i<=	ilosc_odcinkow-ilosc_odcinkow_without_line){
 			SetLegFromTrace(leg_num,0);
+			Serial.println("o");
 		}
 	}
 	time_koniec = micros();
 	czas_wykon=(time_koniec-time_start)/1000;
-  	//Serial.println(czas_wykon);
+  	Serial.println(czas_wykon);
 	delay(delay_micros-czas_wykon);
 	MoveHexapod();
 }
 change_leg_pair();
+};
+
+void Hexapod::SetInit(){
+	for(uint8_t leg_num=0;leg_num<6;leg_num++){
+        SetLegPos(_init_pos,leg_num,false);
+      }
 }
