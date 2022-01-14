@@ -31,7 +31,7 @@ class Hexapod
   Adafruit_PWMServoDriver _pwm[2];
   Servo _servo[6][3];
   float _pos[6][3];
-  float _trace[20][3];
+  float _trace[30][3];
   bool _leg_pair;
   uint16_t _pulse[6][3];
   float _angle_rotz[6];

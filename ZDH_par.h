@@ -4,7 +4,8 @@
 #define a1 24
 #define a2 80
 #define a3 150
-#define D2 28
+//#define D2 28
+#define D2 0
 
 #endif
 
