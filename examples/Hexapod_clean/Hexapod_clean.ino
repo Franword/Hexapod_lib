@@ -3,10 +3,9 @@
 Hexapod hexapod;
 Gamepad pad;
 String command;
-int angle_rotz=0, dlugosc_kroku=50;
-//int ilosc_odcinkow=25, liczba_krokow=2, delay_micros=13;
-int ilosc_odcinkow=28, liczba_krokow=2, delay_micros=50, percent_of_moves_without_line=50;
+int angle_rotz=0, dlugosc_kroku=70, ilosc_odcinkow=25, liczba_krokow=1, delay_micros=13,moves_without_line=12;
 float pos[3];
+bool if_rotate_left=true;
 int z=0, y=0, x=0;
 //siema
 void setup() {
@@ -24,16 +23,20 @@ void loop() {
     command.trim();
     if(command.equals("init")){
       Serial.println(command);
-      //float pos[3]={100.0,0.0,-100.0};
-      for(uint8_t leg_num=0;leg_num<6;leg_num++){
-        for(uint8_t servo_num=0;servo_num<3;servo_num++){
-          hexapod.SetServoAngle(90.0,false,leg_num,servo_num);
-        }
-      }
+      hexapod.SetInit();
       hexapod.MoveHexapod();
     }
     else if (command.equals("walk")){
-      hexapod.walk(angle_rotz,dlugosc_kroku,ilosc_odcinkow,liczba_krokow, delay_micros,percent_of_moves_without_line);
+      hexapod.walk(angle_rotz,dlugosc_kroku,ilosc_odcinkow,liczba_krokow, delay_micros,moves_without_line, true);
+    }
+    else if (command.equals("rotate")){
+      if(if_rotate_left){
+        hexapod.walk(-90,dlugosc_kroku,ilosc_odcinkow,liczba_krokow, delay_micros,moves_without_line, false);
+      }
+      else{
+        hexapod.walk(90,dlugosc_kroku,ilosc_odcinkow,liczba_krokow, delay_micros,moves_without_line, false);
+      }
+      
     }
     else if (command.equals("SetOffset")){
       Serial.println(command);
@@ -59,11 +62,11 @@ void loop() {
     }
     else if(command.equals("d+")){
       Serial.println(command);
-      dlugosc_kroku+=10;
+      dlugosc_kroku++;
     }
     else if(command.equals("d-")){
       Serial.println(command);
-      dlugosc_kroku-=10;
+      dlugosc_kroku--;
     }
     else if(command.equals("a+")){
       Serial.println(command);
@@ -91,11 +94,11 @@ void loop() {
     }
     else if(command.equals("p+")){
       Serial.println(command);
-      percent_of_moves_without_line+=5;
+      moves_without_line++;
     }
     else if(command.equals("p-")){
       Serial.println(command);
-      percent_of_moves_without_line-=5;
+      moves_without_line--;
     }
     else if(command.equals("t+")){
       Serial.println(command);
@@ -135,6 +138,11 @@ void loop() {
       Serial.print("x=");
       Serial.println(x);
     }
+    else if (command.equals("r")){
+      if_rotate_left=!if_rotate_left;
+      Serial.print("r=");
+      Serial.println(if_rotate_left);
+    }
     else{
       Serial.print("walk(a=");
       Serial.print(angle_rotz);
@@ -147,8 +155,9 @@ void loop() {
       Serial.print(", t=");
       Serial.print(delay_micros);
       Serial.print(", p=");
-      Serial.print(percent_of_moves_without_line);
-      Serial.println(")");
+      Serial.print(moves_without_line);
+      Serial.print(") r=");
+      Serial.println(if_rotate_left);
     }
   }
 }

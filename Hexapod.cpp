@@ -68,7 +68,8 @@ void Hexapod::Setup(){
 		_angle_rotz[leg_num]=0;
 		//wlasciwa funkcja
 		_angle_rotz[leg_num]=atan2(dy,dx);
-		_init_pos[0]=100.0;
+		//_angle_rotz[leg_num]=0;
+		_init_pos[0]=105.0;
 		_init_pos[1]=0.0;
 		_init_pos[2]=-100.0;
 		SetInit();
@@ -166,7 +167,7 @@ void Hexapod::SetLegPos(float pos[3],uint8_t leg_num, bool relative){
 	}
 
 	if(leg_num==R1 || leg_num==R2 || leg_num==R3){
-		d2=-D2;
+		d2=D2;
 		_pos[leg_num][1]=y;
 	}
 	else{
@@ -386,8 +387,8 @@ void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odci
 	}
 	_ilosc_without_line=moves_without_line;
 	int ilosc_odcinkow_line=ilosc_odcinkow-2*_ilosc_without_line;
-	Serial.print("ilosc line ");
-	Serial.println(ilosc_odcinkow_line);
+	//Serial.print("ilosc line ");
+	//Serial.println(ilosc_odcinkow_line);
 	if(ilosc_odcinkow_line==0){
 		ilosc_odcinkow_line=1;
 	}
@@ -422,7 +423,7 @@ void Hexapod::trace(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odci
 	}
 	*/
 };
-void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
+void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point, bool if_forward){
 	float angle_rotz;
 	float p_c[3];
 	float pos[3];
@@ -432,9 +433,17 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 	angle_rotz=_angle_rotz[leg_num];
 	//Serial.println(degrees(angle_rotz));
 	//rotz
+	if(if_forward){
 	pos[0]=_trace[trace_point][0]*cos(angle_rotz)+_trace[trace_point][1]*sin(angle_rotz);
 	pos[1]=-_trace[trace_point][0]*sin(angle_rotz)+_trace[trace_point][1]*cos(angle_rotz);
 	pos[2]=_trace[trace_point][2];
+	}
+	else{
+	pos[0]=_trace[trace_point][0];
+	pos[1]=-_trace[trace_point][1];
+	pos[2]=_trace[trace_point][2];
+	}
+	
 	SetLegPos(pos,leg_num,true);
 
 	//serial
@@ -457,38 +466,38 @@ void Hexapod::SetLegFromTrace(uint8_t leg_num, uint8_t trace_point){
 	Serial.println("]");
 	*/
 };
-void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow, int delay_micros,int moves_without_line){
+void Hexapod::walk(int16_t angle_rotz,uint16_t dlugosc_kroku,uint8_t ilosc_odcinkow, uint8_t liczba_krokow, int delay_micros,int moves_without_line, bool if_forward){
 //przygotownie do chodu
 trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow,moves_without_line);
-step(ilosc_odcinkow, delay_micros);
+step(ilosc_odcinkow, delay_micros, if_forward);
 //wlasciwy chod
 trace(angle_rotz,dlugosc_kroku,ilosc_odcinkow,moves_without_line);
 for(uint8_t num_of_steps=0;num_of_steps<liczba_krokow;num_of_steps++){
-	step(ilosc_odcinkow, delay_micros);
+	step(ilosc_odcinkow, delay_micros, if_forward);
 }
 //zakonczenie chodu
 trace(angle_rotz,dlugosc_kroku/2,ilosc_odcinkow,moves_without_line);
-step(ilosc_odcinkow, delay_micros);
+step(ilosc_odcinkow, delay_micros, if_forward);
 };
 
-void Hexapod::step(uint8_t ilosc_odcinkow, int delay_micros){
+void Hexapod::step(uint8_t ilosc_odcinkow, int delay_micros, bool if_forward){
 	unsigned long time_start;
 	unsigned long time_koniec;
 	unsigned long czas_wykon;
 	int delay_var;
 	int ilosc_odcinkow_without_line=_ilosc_without_line;
-	Serial.print("without line ");
-	Serial.println(ilosc_odcinkow_without_line);
+	//Serial.print("without line ");
+	//Serial.println(ilosc_odcinkow_without_line);
 
 	for(uint8_t i=0;i<ilosc_odcinkow;i++){
 	time_start = micros();
 	for(uint8_t leg_num=0;leg_num<6;leg_num++){
 		if(if_leg_active(leg_num)){
-			SetLegFromTrace(leg_num,i+1);
+			SetLegFromTrace(leg_num,i+1,if_forward);
 		}
 		if(if_leg_active(leg_num)==0 && i>=ilosc_odcinkow_without_line && i<ilosc_odcinkow-ilosc_odcinkow_without_line){
-			SetLegFromTrace(leg_num,0);
-			Serial.println("o");
+			SetLegFromTrace(leg_num,0,if_forward);
+			//Serial.println("o");
 		}
 	}
 	time_koniec = micros();

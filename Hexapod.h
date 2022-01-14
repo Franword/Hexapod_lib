@@ -24,10 +24,10 @@ class Hexapod
   void SetLegPos(float[3],uint8_t,bool);
   void dir_kin(float[3], uint8_t);
   void MoveHexapod();
-  void SetLegFromTrace(uint8_t, uint8_t);
+  void SetLegFromTrace(uint8_t, uint8_t, bool);
   void trace(int16_t,uint16_t,uint8_t,int);
-  void walk(int16_t,uint16_t,uint8_t,uint8_t, int,int);
-  void step(uint8_t, int);
+  void walk(int16_t,uint16_t,uint8_t,uint8_t, int,int, bool);
+  void step(uint8_t, int, bool);
   void SetInit();
   private:
   Adafruit_PWMServoDriver _pwm[2];
