@@ -1,9 +1,0 @@
-PWM		KEYWORD1
-Servo   KEYWORD1
-Leg   KEYWORD1
-Hexapod   KEYWORD1
-MoveLeg    KEYWORD2
-MoveServo     KEYWORD2
-MoveHexapod     KEYWORD2
-print_servo_num     KEYWORD2
-print_leg_num     KEYWORD2
