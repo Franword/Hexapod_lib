@@ -6,6 +6,7 @@
 #include "PWM_values.h"
 #include "Addresses.h"
 #include "ZDH_par.h"
+#include "gamepad_codes.h"
 class Hexapod
 {
   public:
