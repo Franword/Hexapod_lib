@@ -7,7 +7,7 @@ int angle_rotz = 0, dlugosc_kroku = 70, ilosc_odcinkow = 25, liczba_krokow = 1, 
 float pos[3];
 bool if_rotate_left = true;
 int z = 0, y = 0, x = 0;
-int test;
+bool enable = true;
 // siema
 void setup()
 {
@@ -27,27 +27,45 @@ void loop()
     switch (pad.PS2buf[tab_arrows_start])
     {
     case up:
-        // hexapod.walk(angle_rotz, dlugosc_kroku, ilosc_odcinkow, liczba_krokow, delay_micros, moves_without_line, true);
-        // delay(1000);
-        Serial.println("up");
+        if (enable == true)
+        {
+            hexapod.walk(angle_rotz, dlugosc_kroku, ilosc_odcinkow, liczba_krokow, delay_micros, moves_without_line, true);
+            Serial.println("up");
+        }
+        enable = false;
         break;
 
     case down:
-        Serial.println("down");
+        if (enable == true)
+        {
+            hexapod.walk(angle_rotz + 180, dlugosc_kroku, ilosc_odcinkow, liczba_krokow, delay_micros, moves_without_line, true);
+            Serial.println("down");
+        }
+        enable = false;
         break;
 
     case left:
-        // hexapod.walk(-90, dlugosc_kroku, ilosc_odcinkow, liczba_krokow, delay_micros, moves_without_line, false);
-        // delay(1000);
-        Serial.println("left");
+
+        if (enable == true)
+        {
+            hexapod.walk(-90, dlugosc_kroku, ilosc_odcinkow, liczba_krokow, delay_micros, moves_without_line, false);
+            Serial.println("left");
+        }
+        enable = false;
         break;
 
     case right:
-        Serial.println("right");
+        if (enable == true)
+        {
+            hexapod.walk(90, dlugosc_kroku, ilosc_odcinkow, liczba_krokow, delay_micros, moves_without_line, false);
+            Serial.println("right");
+        }
+        enable = false;
         break;
 
     case start:
         Serial.println("start");
+        enable = true;
         break;
 
     default:
@@ -57,19 +75,35 @@ void loop()
     switch (pad.PS2buf[tab_buttons_triggers])
     {
     case cross:
-        Serial.println("cross");
+        if (enable == true)
+        {
+            Serial.println("cross");
+        }
+        enable = false;
         break;
 
     case circle:
-        Serial.println("circle");
+        if (enable == true)
+        {
+            Serial.println("circle");
+        }
+        enable = false;
         break;
 
     case square:
-        Serial.println("square");
+        if (enable == true)
+        {
+            Serial.println("square");
+        }
+        enable = false;
         break;
 
     case triangle:
-        Serial.println("triangle");
+        if (enable == true)
+        {
+            Serial.println("triangle");
+        }
+        enable = false;
         break;
     default:
         // Serial.println("tab_buttons_triggers deafult");
