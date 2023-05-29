@@ -1,8 +1,7 @@
-# Hexapod_lib
-Library for hexapod using adafruit pca9685.
-Created by Franciszek Jurga.
+<h1 align="center">Welcome to Adapod 👋</h1>
 
-This library is build using Adafruit-PWM-Servo-Driver-Library and Arduino Standard Libs as EEPROM and SPI.
+## Description
+Adapod is arduino library for 18 DOF hexapod using servo controller <a href="https://www.adafruit.com/product/815" >Adafruit PCA9685</a>.
 
-Adafruit-PWM-Servo-Driver-Library:
-https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
+## References
+This library is build using <a href="https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library" >Adafruit-PWM-Servo-Driver-Library</a> and Arduino Standard libs <a href="https://docs.arduino.cc/learn/built-in-libraries/eeprom" >EEPROM</a> and <a href="https://docs.arduino.cc/learn/communication/spi">SPI</a>.
